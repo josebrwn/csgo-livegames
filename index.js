@@ -3,35 +3,34 @@ var gamesArray = [];
 var gamesList = '';
 var Livescore = require('./hltv-livescore');
 var CircularJSON = require('circular-json');
+var loopEvery = 60000; // 1 minute
 
-livegames.getLiveGames((games, err) => {
-
-	if (err) {
-		console.log(err);
-	}
-	else {
-		console.log(games);
-		games.forEach(function(element) {
-				gamesArray.push(parseInt(element.list_id,10)); // must be int
+function scrapeMatchPage() {
+	livegames.getLiveGames((games, err) => {
+		if (err) {
+			console.log(err);
+		}
+		else {
+			console.log(games);
+			games.forEach(function(element) {
+					gamesArray.push(parseInt(element.list_id,10)); // must be int
+			});
+		}
+		if (gamesArray.length === 0) {
+			console.log('no live games');
+			return;
+		}
+		// convert gamesList as a comma delimited list and send it to the socket
+		gamesList = gamesArray.join(",");
+		// console.log(gamesList);
+		var live = new Livescore({
+			gamesList: gamesArray
 		});
-	}
-
-	if (gamesArray.length === 0) {
-		console.log('no live games');
-		return;
-	}
-
-  // convert gamesList as a comma delimited list and send it to the socket
-	gamesList = gamesArray.join(",");
-  // console.log(gamesList);
-  var live = new Livescore({
-    gamesList: gamesArray
-  });
-
-
-  // raw data from socketio-wildcard
-  live.on('raw', function(data) {
-    console.log(CircularJSON.stringify(data, null, 2));
-  });
-
-});
+		// raw data from socketio-wildcard
+		live.on('raw', function(data) {
+			console.log(CircularJSON.stringify(data, null, 2));
+		});
+	});
+}
+scrapeMatchPage();
+setInterval(scrapeMatchPage,loopEvery);
