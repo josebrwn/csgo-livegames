@@ -29,7 +29,6 @@ var setInactivityTimer = function(time) {
 };
 
 console.log('In new child process, newGames = ', newGames);
-setInactivityTimer(maxInactive);
 
 var live = new Livescore({
   gamesList: newGames

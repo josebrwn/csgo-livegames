@@ -21,11 +21,11 @@ function scrapeMatchPage() {
 			});
 		}
 
-		// for testing, manually add a new game. vary conditions for different effects
-		if (1==1) {
-			newGames.push(2311427);
-			newGames.push(2311989);
-		}
+		// // for testing, manually add a new game. vary conditions for different effects
+		// if (1==1) {
+		// 	newGames.push(2311427);
+		// 	newGames.push(2311989);
+		// }
 
 		if (newGames.length === 0) {
 			console.log('no live games');
@@ -44,7 +44,6 @@ function scrapeMatchPage() {
 		if (newGames.length > 0) {
 			oldGames = newGames;
 			gamesList = newGames.join(",");
-			console.log (gamesList);
 			// fork the child process
 			var child = cp.fork('./childProcess.js', [newGames]);
 		}
