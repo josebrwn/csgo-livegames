@@ -19,10 +19,10 @@ var setInactivityTimer = function(time) {
     self.time = self.time - 1;
     _s = Number(self.time);
     if (_s % tick === 0 && _s > -1) {
-      console.log('inactive time remaining ', self.time);
+      console.log(newGames, 'inactive time remaining ', self.time);
     }
     if (_s <= 0) {
-      console.log('exiting due to inactivity');
+      console.log(newGames, 'exiting due to inactivity');
       throw new Error('exiting'); // child self-destructs
     }
   }, 1000);
@@ -36,6 +36,7 @@ var live = new Livescore({
 
 // raw data from socketio-wildcard
 live.on('raw', function(data) {
-	console.log(CircularJSON.stringify(data, null, 2));
+  // console.log(CircularJSON.stringify(data, null, 2));
+	process.send(CircularJSON.stringify(data, null, 2));
   setInactivityTimer(maxInactive);
 });
