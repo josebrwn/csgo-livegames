@@ -49,10 +49,17 @@ function scrapeMatchPage() {
 			});
 		}
 		if (currentGames.length === 0) {
+      var currentGamesJSON = '{ "currentGames": [] }';
+      lg.emit('msg_to_client', newGamesJSON); // broadcast to all sockets
 			console.log('no live games');
 			oldGames = currentGames; // always reset oldGames
 			return;
 		}
+    else {
+      var currentGamesJSON = '{ "currentGames": [' + currentGames + '] }';
+      lg.emit('msg_to_client', currentGamesJSON); // broadcast to all sockets
+    }
+
 		newGames = leftDisjoin(currentGames, oldGames);
 		finishedGames = leftDisjoin(oldGames, currentGames);
 		console.log ('current games:', currentGames);
@@ -81,7 +88,7 @@ function scrapeMatchPage() {
     /*
 			post finishedGames to the API
 		*/
-    if (newGames.length > 0) {
+    if (finishedGames.length > 0) {
   		var finishedGamesJSON = '{ "finishedGames": [' + finishedGames + '] }';
   		if (IsJsonString(finishedGamesJSON)) {
   			options.body = finishedGamesJSON;

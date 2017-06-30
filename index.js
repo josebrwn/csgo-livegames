@@ -65,7 +65,7 @@ function scrapeMatchPage() {
     /*
 			post finishedGames to the API
 		*/
-    if (newGames.length > 0) {
+    if (finishedGames.length > 0) {
   		var finishedGamesJSON = '{ "finishedGames": [' + finishedGames + '] }';
   		if (IsJsonString(finishedGamesJSON)) {
   			options.body = finishedGamesJSON;
