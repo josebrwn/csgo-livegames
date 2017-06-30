@@ -5,7 +5,6 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http); // use io.close() to disconnect all users dynamically
 
 const livegames = require('./hltv-live-games');
-var logging = require('./logging');
 var Livescore = require('./hltv-livescore');
 var cp = require('child_process');
 var request = require("request");
