@@ -1,5 +1,9 @@
 // 'use strict'; // PROBLEM! TODO
 
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http); // use io.close() to disconnect all users dynamically
+
 const livegames = require('./hltv-live-games');
 var logging = require('./logging');
 var Livescore = require('./hltv-livescore');
@@ -13,6 +17,17 @@ var options = {
         'content-type': 'application/json'
     }
 };
+
+// create a namespace for livegames:
+var lg = io.of('/livegames');
+
+// start the server
+app.get('/', function(req, res){
+  res.sendFile(__dirname + '/index.html');
+});
+http.listen(3001, function(){
+  console.log('listening on *:3001');
+});
 
 
 var newGames = [];
@@ -56,6 +71,8 @@ function scrapeMatchPage() {
   			request(options, function(error, response, body) {
   					if (error) throw new Error(error);
   					console.log(body);
+            lg.emit('msg_to_client', newGamesJSON); // broadcast to all sockets
+
   			});
   		}
   		else {
@@ -72,6 +89,8 @@ function scrapeMatchPage() {
   			request(options, function(error, response, body) {
   					if (error) throw new Error(error);
   					console.log(body);
+            lg.emit('msg_to_client', finishedGamesJSON); // broadcast to all sockets
+
   			});
   		}
   		else {
@@ -95,6 +114,8 @@ function scrapeMatchPage() {
 					request(options, function(error, response, body) {
 							if (error) throw new Error(error);
 							console.log(body); // response from the API
+              lg.emit('msg_to_client', data); // broadcast to all sockets
+
 					});
 				}
 				else {
@@ -109,6 +130,17 @@ function scrapeMatchPage() {
 // main entry point: execute the scraper immediately, repeat every N seconds
 scrapeMatchPage();
 setInterval(scrapeMatchPage,loopEvery);
+
+lg.emit('msg_to_client', 'body'); // broadcast to all sockets
+lg.on('connection', function(socket){
+  lg.emit('msg_to_client', 'User ' + socket.id + ' connected'); // broadcast to all sockets
+  console.log( 'User ' + socket.id + ' connected' );
+  socket.on('disconnect', function(){
+    console.log( 'User ' + socket.id + ' disconnected');
+  });
+});
+
+
 
 // efficient ES6 function to find difference between 2 arrays
 function leftDisjoin(newArr, oldArr) {
