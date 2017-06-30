@@ -45,7 +45,17 @@ Livescore.prototype._onConnect = function() {
 
 // invoked by hltv connect event
 Livescore.prototype._onReceive = function(data) {
+  self.time = currentTime();
+  data["timestamp"] = self.time;
   self.emit('raw', data);
+};
+
+// the current UTC date and time. NB: HLTV is on Central European Time (CET or CEDT).
+var currentTime = () => {
+  _time = new Date().toISOString().
+  replace(/T/, ' ').    // replace T with a space
+  replace(/\..+/, '');
+  return _time;
 };
 
 // TODO _onScore?
