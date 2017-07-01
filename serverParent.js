@@ -49,7 +49,7 @@ function scrapeMatchPage() {
   			});
       }
       catch (e) {
-        console.log('WARNING', e);
+        console.log('WARNING', 'body undefined');
       }
 		}
 		if (currentGames.length === 0) {

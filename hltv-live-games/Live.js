@@ -3,10 +3,19 @@ var request = require("request");
 var cheerio = require("cheerio");
 
 module.exports.getLiveGames = (callback) => {
+	//
 	request('http://www.hltv.org/matches/', (err, response, body) => {
     if (err) {
       callback(err);
     }
+		// HACK - when the site is unreachable cheerio throws TypeError: Cannot read property 'parent' of undefined
+		if (body == null) {
+			var results = [];
+			callback (results);
+			return;
+		}
+
+		// console.log(body);
     var $ = cheerio.load(body);
 		var $live_matches = $('.live-match');
     var results = [];
