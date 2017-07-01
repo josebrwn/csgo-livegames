@@ -43,9 +43,14 @@ function scrapeMatchPage() {
 			newGames = [];
 			finishedGames = [];
 			// console.log(games);
-			games.forEach(function(element) {
-					currentGames.push(parseInt(element.list_id,10)); // must be int
-			});
+      try {
+  			games.forEach(function(element) {
+  					currentGames.push(parseInt(element.list_id,10)); // must be int
+  			});
+      }
+      catch (e) {
+        console.log('WARNING', e);
+      }
 		}
 		if (currentGames.length === 0) {
       var currentGamesJSON = '{ "currentGames": [] }';
@@ -65,6 +70,7 @@ function scrapeMatchPage() {
 		console.log('old games:', oldGames);
 		console.log('new games:', newGames);
 		console.log('finished games:', finishedGames);
+    console.log('connected users:', Object.keys(io.sockets.sockets));
 
 		/*
 			post newGames to the API
@@ -127,7 +133,7 @@ function scrapeMatchPage() {
 					});
 				}
 				else {
-					console.log('INFORMATION', data);
+					console.log('INFORMATION', data); // non JSON coming from child process
 				}
       });
 		}
@@ -139,7 +145,6 @@ function scrapeMatchPage() {
 scrapeMatchPage();
 setInterval(scrapeMatchPage,loopEvery);
 
-lg.emit('msg_to_client', 'body'); // broadcast to all sockets
 lg.on('connection', function(socket){
   lg.emit('msg_to_client', 'User ' + socket.id + ' connected'); // broadcast to all sockets
   console.log( 'User ' + socket.id + ' connected' );
