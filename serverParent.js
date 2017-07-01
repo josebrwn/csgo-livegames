@@ -146,7 +146,6 @@ scrapeMatchPage();
 setInterval(scrapeMatchPage,loopEvery);
 
 lg.on('connection', function(socket){
-  lg.emit('msg_to_client', 'User ' + socket.id + ' connected'); // broadcast to all sockets
   console.log( 'User ' + socket.id + ' connected' );
   socket.on('disconnect', function(){
     console.log( 'User ' + socket.id + ' disconnected');
