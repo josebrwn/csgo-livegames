@@ -10,7 +10,7 @@ var cp = require('child_process');
 var request = require("request");
 var options = {
     method: 'POST',
-    url: 'http://jsonplaceholder.typicode.com/posts',
+    url: '***REMOVED***', // 'http://jsonplaceholder.typicode.com/posts',
     headers: {
         'cache-control': 'no-cache',
         'content-type': 'application/json'
@@ -81,9 +81,10 @@ function scrapeMatchPage() {
   			options.body = newGamesJSON;
   			request(options, function(error, response, body) {
   					if (error) throw new Error(error);
-            // console.log(body);
-  					console.log(newGamesJSON);
-            lg.emit('msg_to_client', newGamesJSON); // broadcast to all sockets
+            console.log(body);
+  					// console.log(newGamesJSON);
+            // lg.emit('msg_to_client', newGamesJSON); // broadcast to all sockets
+            lg.emit('msg_to_client', body); // broadcast to all sockets
 
   			});
   		}
@@ -100,9 +101,10 @@ function scrapeMatchPage() {
   			options.body = finishedGamesJSON;
   			request(options, function(error, response, body) {
   					if (error) throw new Error(error);
-  					// console.log(body);
-            console.log(finishedGamesJSON);
-            lg.emit('msg_to_client', finishedGamesJSON); // broadcast to all sockets
+  					console.log(body);
+            // console.log(finishedGamesJSON);
+            // lg.emit('msg_to_client', finishedGamesJSON); // broadcast to all sockets
+            lg.emit('msg_to_client', body); // broadcast to all sockets
 
   			});
   		}
@@ -126,9 +128,10 @@ function scrapeMatchPage() {
 					options.body = data;
 					request(options, function(error, response, body) {
 							if (error) throw new Error(error);
-							// console.log(body); // response from the API
-              console.log(data);
-              lg.emit('msg_to_client', data); // broadcast to all sockets
+							console.log(body); // response from the API
+              // console.log(data);
+              // lg.emit('msg_to_client', data); // broadcast to all sockets
+              lg.emit('msg_to_client', body); // broadcast to all sockets
 
 					});
 				}
