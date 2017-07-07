@@ -6,6 +6,7 @@ self.time = 0;
 self.interval; // time remaining.
 var maxInactive = 1800; // TODO is this sufficient?
 var tick = 300; // remaining inactive alert
+var oldMessage = '';
 
 const newGames = args.split(',').map(Number).filter(Boolean); // has to be INT array
 
@@ -39,7 +40,9 @@ var live = new Livescore({
 
 // raw data from socketio-wildcard
 live.on('raw', function(data) {
-  // console.log(CircularJSON.stringify(data, null, 2));
-	process.send(CircularJSON.stringify(data, null, 2));
-  setInactivityTimer(maxInactive);
+  if (oldMessage != data) {
+  	process.send(CircularJSON.stringify(data, null, 2));
+    oldMessage = data;
+    setInactivityTimer(maxInactive);
+  }
 });

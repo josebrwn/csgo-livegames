@@ -115,7 +115,6 @@ function scrapeMatchPage() {
         console.log('WARNING', finishedGamesJSON);
   		}
     }
-		// TODO is a child process sometimes forked twice because of timing issues?
 
 		// send any new games to a newly spawned child process
 		if (newGames.length > 0) {
@@ -157,8 +156,6 @@ lg.on('connection', function(socket){
     console.log( 'User ' + socket.id + ' disconnected');
   });
 });
-
-
 
 // efficient ES6 function to find difference between 2 arrays
 function leftDisjoin(newArr, oldArr) {
