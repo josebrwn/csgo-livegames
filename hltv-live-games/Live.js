@@ -2,10 +2,8 @@ var async = require("async");
 var request = require("request");
 var cheerio = require("cheerio");
 
-// TODO data-livescore-server-url="https://scorebot-secure.hltv.org"
-
 module.exports.getLiveGames = (callback) => {
-	request('http://www.hltv.org/matches/', (err, response, body) => {
+	request('https://www.hltv.org/matches', (err, response, body) => {
     if (err) {
       callback(err);
     }
