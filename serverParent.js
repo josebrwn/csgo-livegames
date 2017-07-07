@@ -38,7 +38,7 @@ var loopEvery = 60000; // 1 minute
 function scrapeMatchPage() {
 	livegames.getLiveGames((games, err) => {
 		if (err) {
-			console.log(err);
+			console.log('WARNING', err);
 		}
 		else {
 			currentGames = [];
@@ -56,7 +56,7 @@ function scrapeMatchPage() {
 		}
 		if (currentGames.length === 0) {
       var currentGamesJSON = '{ "currentGames": [] }';
-      lg.emit('msg_to_client', newGamesJSON); // broadcast to all sockets
+      lg.emit('msg_to_client', currentGamesJSON); // broadcast to all sockets
 			console.log('no live games');
 			oldGames = currentGames; // always reset oldGames
 			return;
