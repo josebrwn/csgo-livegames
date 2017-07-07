@@ -19,7 +19,7 @@ module.exports.getLiveGames = (callback) => {
 				$('a.a-reset').each((index, element) => {
 					const game = {};
 					game.status = 'live';
-					game.match_url = `http://www.hltv.org${(element.attribs.href)}`;
+					game.match_url = `https://www.hltv.org${(element.attribs.href)}`;
 					game.list_id = element.attribs.href.match(/(\d+)/)[0]; // regex: first string of numbers
 					// game.list_id = $('table').attr('id', 'data-livescore-match').data('livescoreMatch'); // superfancy
 					game.event_name = $('.event-name').eq(0).text();
