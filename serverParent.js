@@ -52,6 +52,7 @@ function scrapeMatchPage() {
       }
       catch (e) {
         console.log('WARNING', 'body undefined');
+        return; // do not continue, so that oldGames remains fixed until error clears (eg cheerio BUG)
       }
 		}
 		if (currentGames.length === 0) {
