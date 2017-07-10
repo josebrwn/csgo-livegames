@@ -40,7 +40,7 @@ module.exports.getLiveGames = (callback) => {
       });
     }
     catch (e) {
-      console.log('page unreachable');
+      console.log(e);
       callback(e);
     }
   }); // request
@@ -91,7 +91,7 @@ module.exports.getUpcomingGames = (callback) => {
       });
     }
     catch (e) {
-      console.log('page unreachable');
+      console.log(e);
       callback(e);
     }
   }); // request

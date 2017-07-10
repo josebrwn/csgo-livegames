@@ -19,10 +19,8 @@ var options = {
     }
 };
 
-// create a namespace for livegames:
 var lg = io.of('/livegames');
 
-// start the server
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
@@ -33,33 +31,33 @@ http.listen(3001, function(){
 var newGames = [];
 var oldGames = [];
 var currentGames = [];
-var loopEvery = 60000; // 1 minute
+var loopEvery = 60000;
 
 function scrapeMatchPage() {
   livegames.getLiveGames((games, err) => {
     if (err) {
       console.log('WARNING', err);
+      return; // oldGames remains fixed
     }
     else {
       currentGames = [];
       newGames = [];
       finishedGames = [];
-      // console.log(games);
       try {
         games.forEach(function(element) {
-            currentGames.push(parseInt(element.list_id,10)); // must be int
+          currentGames.push(parseInt(element.list_id,10)); // must be int
         });
       }
       catch (e) {
-        console.log('WARNING', 'body undefined');
-        return; // do not continue, so that oldGames remains fixed until error clears
+        console.log('WARNING', e);
+        return; // oldGames remains fixed
       }
     }
     newGames = leftDisjoin(currentGames, oldGames);
     finishedGames = leftDisjoin(oldGames, currentGames);
     var currentGamesJSON = '{ "currentGames": [' + currentGames + '] }';
     console.log ('current games:', currentGames);
-    lg.emit('msg_to_client', currentGamesJSON); // broadcast to all sockets
+    lg.emit('msg_to_client', currentGamesJSON);
 
     if (currentGames.length === 0 && finishedGames.length === 0) {
       oldGames = currentGames; // always reset oldGames
@@ -79,14 +77,14 @@ function scrapeMatchPage() {
       if (IsJsonString(newGamesJSON)) {
         options.body = newGamesJSON;
         console.log(newGamesJSON);
-        lg.emit('msg_to_client', newGamesJSON); // broadcast the raw JSON
+        lg.emit('msg_to_client', newGamesJSON);
         request(options, function(error, response, body) {
           if (error) {
-            console.log('WARNING', error); // the site was unreachable
+            console.log('WARNING', error);
           }
           else {
             console.log(body);
-            lg.emit('msg_to_client', body); // broadcast the API response
+            // lg.emit('msg_to_client', body);
           }
         });
       }
@@ -102,14 +100,14 @@ function scrapeMatchPage() {
       if (IsJsonString(finishedGamesJSON)) {
         options.body = finishedGamesJSON;
         console.log(finishedGamesJSON);
-        lg.emit('msg_to_client', finishedGamesJSON); // broadcast to all sockets
+        lg.emit('msg_to_client', finishedGamesJSON);
         request(options, function(error, response, body) {
           if (error) {
-            console.log('WARNING', error); // the site was unreachable
+            console.log('WARNING', error);
           }
           else {
             console.log(body);
-            lg.emit('msg_to_client', body); // broadcast to all sockets
+            // lg.emit('msg_to_client', body);
           }
         });
       }
@@ -118,9 +116,7 @@ function scrapeMatchPage() {
       }
     }
 
-    // send any new games to a newly spawned child process
     if (newGames.length > 0) {
-      // fork the child process
       var child = cp.fork('./childProcess.js', [newGames]);
       // The only events you can receive from the child process are error, exit, disconnect, close, and message.
       child.on('message', function(data) {
@@ -130,27 +126,26 @@ function scrapeMatchPage() {
         if (IsJsonString(data)) {
           options.body = data;
           console.log(data);
-          lg.emit('msg_to_client', data); // broadcast to all sockets
+          lg.emit('msg_to_client', data);
           request(options, function(error, response, body) {
             if (error) {
-              console.log('WARNING', error); // the site was unreachable
+              console.log('WARNING', error);
             }
             else {
-              console.log(body); // response from the API
-              lg.emit('msg_to_client', body); // broadcast to all sockets
+              console.log(body);
+              // lg.emit('msg_to_client', body);
             }
           });
         }
         else {
-          console.log('INFORMATION', data); // non JSON coming from child process
+          console.log('INFORMATION', data);
         }
       });
-    } // if
+    }
     oldGames = currentGames; // always reset oldGames
-  }); // getLiveGames
-} // scrapeMatchPage
+  });
+}
 
-// main entry point: execute the scraper immediately, repeat every N seconds
 scrapeMatchPage();
 setInterval(scrapeMatchPage,loopEvery);
 
