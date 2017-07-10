@@ -20,11 +20,11 @@ request will be made, making it much likely to get rate limited.
 const getLiveGames = require('hltv-live-games');
 
 getLiveGames(true, (err, games) => {
-	if (err) {
-		console.log(err);
-	} else {
-		console.log(games);
-	}
+  if (err) {
+    console.log(err);
+  } else {
+    console.log(games);
+  }
 });
 ```
 
