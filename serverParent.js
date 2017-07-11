@@ -8,6 +8,10 @@ const livegames = require('./hltv-live-games');
 var Livescore = require('./hltv-livescore');
 var cp = require('child_process');
 var request = require("request");
+
+/*
+  avoid running simultaneously from multiple servers when connected to the API
+*/
 var options = {
     method: 'POST',
     // url: 'http://jsonplaceholder.typicode.com/posts', // dummy
@@ -16,7 +20,8 @@ var options = {
     headers: {
         'cache-control': 'no-cache',
         'content-type': 'application/json'
-    }
+    },
+    timeout: 10000 // 10 seconds. default is 120000
 };
 
 var lg = io.of('/livegames');
