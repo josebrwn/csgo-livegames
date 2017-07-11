@@ -31,6 +31,7 @@ app.get('/', function(req, res){
 });
 http.listen(3001, function(){
   console.log('listening on *:3001');
+  console.log('process.env.NODE_ENV');
 });
 
 var newGames = [];
@@ -129,6 +130,7 @@ function scrapeMatchPage() {
           post livescores to the API
         */
         if (IsJsonString(data)) {
+          data = data.replace(/de_cbble/g, 'de_cobblestone');
           options.body = data;
           console.log(data);
           lg.emit('msg_to_client', data);
