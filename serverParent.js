@@ -14,9 +14,9 @@ var request = require("request");
 */
 var options = {
     method: 'POST',
-    url: 'http://jsonplaceholder.typicode.com/posts', // dummy
+    // url: 'http://jsonplaceholder.typicode.com/posts', // dummy
     // url: '***REMOVED***', // local
-    // url: '***REMOVED***', // staging
+    url: '***REMOVED***', // staging
     headers: {
         'cache-control': 'no-cache',
         'content-type': 'application/json'
