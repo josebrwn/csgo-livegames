@@ -14,9 +14,9 @@ var request = require("request");
 */
 var options = {
     method: 'POST',
-    // url: 'http://jsonplaceholder.typicode.com/posts', // dummy
+    url: 'http://jsonplaceholder.typicode.com/posts', // dummy
     // url: '***REMOVED***', // local
-    url: '***REMOVED***', // staging
+    // url: '***REMOVED***', // staging
     headers: {
         'cache-control': 'no-cache',
         'content-type': 'application/json'
@@ -31,7 +31,7 @@ app.get('/', function(req, res){
 });
 http.listen(3001, function(){
   console.log('listening on *:3001');
-  console.log('process.env.NODE_ENV');
+  console.log(process.env.NODE_ENV);
 });
 
 var newGames = [];
