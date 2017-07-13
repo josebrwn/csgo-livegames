@@ -37,7 +37,7 @@ http.listen(3001, function(){
 var newGames = [];
 var oldGames = [];
 var currentGames = [];
-var loopEvery = 60000;
+var loopEvery = 120000;
 
 function scrapeMatchPage() {
   livegames.getLiveGames((games, err) => {

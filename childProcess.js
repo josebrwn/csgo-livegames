@@ -20,16 +20,19 @@ var setInactivityTimer = function(time) {
     self.time = self.time - 1;
     _s = Number(self.time);
     if (_s % tick === 0 && _s > -1) {
-      process.send(newGames + ' inactive time remaining ' + self.time);
+      try {process.send(newGames + ' inactive time remaining ' + self.time);}
+      catch (e) {console.log(newGames + ' inactive time remaining ' + self.time);}
     }
     if (_s <= 0) {
-      process.send(newGames + ' exiting due to inactivity');
+      try {process.send(newGames + ' exiting due to inactivity');}
+      catch (e) {console.log(newGames + ' exiting due to inactivity');}
       throw new Error('exiting'); // child self-destructs
     }
   }, 1000);
 };
 
-process.send('Launching new child process, newGames = ' + newGames);
+try {process.send('Launching new child process, newGames = ' + newGames);}
+catch (e) {console.log('Launching new child process, newGames = ' + newGames);}
 
 var live = new Livescore({
   gamesList: newGames
@@ -38,7 +41,8 @@ var live = new Livescore({
 // raw data from socketio-wildcard
 live.on('raw', function(data) {
   if (oldMessage != data) {
-    process.send(CircularJSON.stringify(data, null, 2));
+    try {process.send(CircularJSON.stringify(data, null, 2));}
+    catch (e) {console.log(CircularJSON.stringify(data, null, 2));}
     oldMessage = data;
     setInactivityTimer(maxInactive);
   }
