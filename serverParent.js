@@ -15,8 +15,8 @@ var request = require("request");
 var options = {
     method: 'POST',
     // url: 'http://jsonplaceholder.typicode.com/posts', // dummy
-    // url: '***REMOVED***', // local
-    url: '***REMOVED***', // staging
+    url: '***REMOVED***', // local
+    // url: '***REMOVED***', // staging
     headers: {
         'cache-control': 'no-cache',
         'content-type': 'application/json'
@@ -137,7 +137,7 @@ function scrapeMatchPage() {
           post livescores to the API
         */
         if (IsJsonString(data)) {
-          data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is now handled in csgomapslookup
+          data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is also handled in csgomapslookup
           options.body = data;
           console.log(data);
           lg.emit('msg_to_client', data);
@@ -146,12 +146,15 @@ function scrapeMatchPage() {
               console.log('WARNING', error);
             }
             else {
-              if (body !== '"OK"') { // HACK our API says "OK" a lot.
-                // console.log(body);
-                console.log(JSON.stringify(body));
-                lg.emit('msg_to_client', JSON.stringify(body));
+              if (body === '"OK"' || body.indexOf('"ReturnCode":-1') > 0) { // hide misc errors from the client
+                console.log(body);
               }
-
+              else {
+                var bodyJson = JSON.parse(body);
+                // bodyJson.foo = 'hi there'; // TODO add a field to denote API response
+                console.log(bodyJson);
+                lg.emit('msg_to_client', bodyJson);
+              }
             }
           });
         }
