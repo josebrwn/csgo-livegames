@@ -16,8 +16,8 @@ var CircularJSON = require('circular-json');
 var options = {
     method: 'POST',
     // url: 'http://jsonplaceholder.typicode.com/posts', // dummy
-    url: '***REMOVED***', // local
-    // url: '***REMOVED***', // staging
+    // url: '***REMOVED***', // local
+    url: '***REMOVED***', // staging
     headers: {
         'cache-control': 'no-cache',
         'content-type': 'application/json'
@@ -91,9 +91,9 @@ function scrapeMatchPage() {
           }
           else {
             if (body !== '"OK"') {
-              // console.log(body);
-              console.log(CircularJSON.stringify(body));
-              lg.emit('msg_to_client', CircularJSON.stringify(body));
+              var bodyJson = CircularJSON.parse(body);
+              console.log(CircularJSON.stringify(bodyJson));
+              lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
             }
           }
         });
@@ -117,9 +117,9 @@ function scrapeMatchPage() {
           }
           else {
             if (body !== '"OK"') {
-              // console.log(body);
-              console.log(CircularJSON.stringify(body));
-              lg.emit('msg_to_client', CircularJSON.stringify(body));
+              var bodyJson = CircularJSON.parse(body);
+              console.log(CircularJSON.stringify(bodyJson));
+              lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
             }
 
           }
@@ -152,7 +152,6 @@ function scrapeMatchPage() {
               }
               else {
                 var bodyJson = CircularJSON.parse(body);
-                // bodyJson.foo = 'hi there'; // TODO add a field to denote API response
                 console.log(CircularJSON.stringify(bodyJson));
                 lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
               }
