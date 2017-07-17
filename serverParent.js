@@ -8,6 +8,7 @@ const livegames = require('./hltv-live-games');
 var Livescore = require('./hltv-livescore');
 var cp = require('child_process');
 var request = require("request");
+var CircularJSON = require('circular-json');
 
 /*
   avoid running simultaneously from multiple servers when connected to the API
@@ -91,8 +92,8 @@ function scrapeMatchPage() {
           else {
             if (body !== '"OK"') {
               // console.log(body);
-              console.log(JSON.stringify(body));
-              lg.emit('msg_to_client', JSON.stringify(body));
+              console.log(CircularJSON.stringify(body));
+              lg.emit('msg_to_client', CircularJSON.stringify(body));
             }
           }
         });
@@ -117,8 +118,8 @@ function scrapeMatchPage() {
           else {
             if (body !== '"OK"') {
               // console.log(body);
-              console.log(JSON.stringify(body));
-              lg.emit('msg_to_client', JSON.stringify(body));
+              console.log(CircularJSON.stringify(body));
+              lg.emit('msg_to_client', CircularJSON.stringify(body));
             }
 
           }
@@ -150,10 +151,10 @@ function scrapeMatchPage() {
                 console.log(body);
               }
               else {
-                var bodyJson = JSON.parse(body);
+                var bodyJson = CircularJSON.parse(body);
                 // bodyJson.foo = 'hi there'; // TODO add a field to denote API response
-                console.log(bodyJson);
-                lg.emit('msg_to_client', bodyJson);
+                console.log(CircularJSON.stringify(bodyJson));
+                lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
               }
             }
           });
