@@ -89,8 +89,11 @@ function scrapeMatchPage() {
             console.log('WARNING', error);
           }
           else {
-            console.log(body);
-            // lg.emit('msg_to_client', body);
+            if (body !== '"OK"') {
+              // console.log(body);
+              console.log(JSON.stringify(body));
+              lg.emit('msg_to_client', JSON.stringify(body));
+            }
           }
         });
       }
@@ -112,8 +115,12 @@ function scrapeMatchPage() {
             console.log('WARNING', error);
           }
           else {
-            console.log(body);
-            // lg.emit('msg_to_client', body);
+            if (body !== '"OK"') {
+              // console.log(body);
+              console.log(JSON.stringify(body));
+              lg.emit('msg_to_client', JSON.stringify(body));
+            }
+
           }
         });
       }
@@ -130,7 +137,7 @@ function scrapeMatchPage() {
           post livescores to the API
         */
         if (IsJsonString(data)) {
-          data = data.replace(/de_cbble/g, 'de_cobblestone');
+          data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is now handled in csgomapslookup
           options.body = data;
           console.log(data);
           lg.emit('msg_to_client', data);
@@ -139,8 +146,12 @@ function scrapeMatchPage() {
               console.log('WARNING', error);
             }
             else {
-              console.log(body);
-              // lg.emit('msg_to_client', body);
+              if (body !== '"OK"') { // HACK our API says "OK" a lot.
+                // console.log(body);
+                console.log(JSON.stringify(body));
+                lg.emit('msg_to_client', JSON.stringify(body));
+              }
+
             }
           });
         }
