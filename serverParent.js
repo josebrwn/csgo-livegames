@@ -16,8 +16,8 @@ var CircularJSON = require('circular-json');
 var options = {
     method: 'POST',
     // url: 'http://jsonplaceholder.typicode.com/posts', // dummy
-    // url: '***REMOVED***', // local
-    url: '***REMOVED***', // staging
+    url: '***REMOVED***', // local
+    // url: '***REMOVED***', // staging
     headers: {
         'cache-control': 'no-cache',
         'content-type': 'application/json'
@@ -95,6 +95,9 @@ function scrapeMatchPage() {
               console.log(CircularJSON.stringify(bodyJson));
               lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
             }
+            else {
+              console.log(body);
+            }
           }
         });
       }
@@ -121,7 +124,9 @@ function scrapeMatchPage() {
               console.log(CircularJSON.stringify(bodyJson));
               lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
             }
-
+            else {
+              console.log(body);
+            }
           }
         });
       }
@@ -140,8 +145,9 @@ function scrapeMatchPage() {
         if (IsJsonString(data)) {
           data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is also handled in csgomapslookup
           options.body = data;
-          console.log(data);
-          lg.emit('msg_to_client', data);
+          data = CircularJSON.parse(data); // condensed but not truncated
+          console.log(CircularJSON.stringify(data));
+          lg.emit('msg_to_client', CircularJSON.stringify(data));
           request(options, function(error, response, body) {
             if (error) {
               console.log('WARNING', error);
