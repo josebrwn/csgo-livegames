@@ -18,6 +18,7 @@ var options = {
     // url: 'http://jsonplaceholder.typicode.com/posts', // dummy
     // url: '***REMOVED***', // local
     url: '***REMOVED***', // staging
+    // url: '***REMOVED***', // production
     headers: {
         'cache-control': 'no-cache',
         'content-type': 'application/json'
@@ -38,7 +39,10 @@ http.listen(3001, function(){
 var newGames = [];
 var oldGames = [];
 var currentGames = [];
-var loopEvery = 120000;
+
+// 2017-07-19 2:30 also changing inactivity timer
+// TODO change to setTimeout()
+var loopEvery = 150000;
 
 function scrapeMatchPage() {
   livegames.getLiveGames((games, err) => {
