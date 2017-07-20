@@ -2,8 +2,10 @@ var io = require('socket.io-client');
 var patch = require('socketio-wildcard')(io.Manager);
 var EE = require('events').EventEmitter;
 var inherits = require('util').inherits;
-var CONNECTION = 'http://scorebot2.hltv.org'; // https://scorebot-secure.hltv.org port 443
-var PORT = 10022;
+// var CONNECTION = 'http://scorebot2.hltv.org';
+// var PORT = 10022;
+var CONNECTION = 'https://scorebot-secure.hltv.org';
+var PORT = 443;  // 53132 // , {secure: true}
 var self;
 
 function Livescore(options) {
@@ -47,7 +49,9 @@ Livescore.prototype._onConnect = function() {
 Livescore.prototype._onReceive = function(data) {
   self.time = currentTime();
   data["timestamp"] = self.time;
-  self.emit('raw', data);
+  try {self.emit('raw', data);} // 2017-07-20 handle error when parent is unreachable
+  catch (e) {console.log(e);}
+
 };
 
 // the current UTC date and time. NB: HLTV is on Central European Time (CET or CEDT).
