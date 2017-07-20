@@ -100,9 +100,6 @@ function scrapeMatchPage() {
               if (bodyJson["Message"] === null) {
                 lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
               }
-              else {
-                console.log(body); // catch API error message
-              }
             }
             else {
               console.log(body);
@@ -133,9 +130,6 @@ function scrapeMatchPage() {
               console.log(CircularJSON.stringify(bodyJson));
               if (bodyJson["Message"] === null) {
                 lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
-              }
-              else {
-                console.log(body); // catch API error message
               }
             }
             else {
@@ -175,9 +169,6 @@ function scrapeMatchPage() {
                 console.log(CircularJSON.stringify(bodyJson));
                 if (bodyJson["Message"] === null) {
                   lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
-                }
-                else {
-                  console.log(body); // catch API error message
                 }
               }
             }
