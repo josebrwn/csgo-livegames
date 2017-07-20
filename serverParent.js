@@ -10,14 +10,21 @@ var cp = require('child_process');
 var request = require("request");
 var CircularJSON = require('circular-json');
 
+var newGames = [];
+var oldGames = [];
+var currentGames = [];
+
+var loopEvery = 150000;
+var nextInterval = 2000;
+
 /*
   avoid running simultaneously from multiple servers when connected to the API
 */
 var options = {
     method: 'POST',
-    url: 'http://jsonplaceholder.typicode.com/posts', // dummy
+    // url: 'http://jsonplaceholder.typicode.com/posts', // dummy
     // url: '***REMOVED***', // local
-    // url: '***REMOVED***', // staging
+    url: '***REMOVED***', // staging
     // url: '***REMOVED***', // production
     headers: {
         'cache-control': 'no-cache',
@@ -35,13 +42,6 @@ http.listen(3001, function(){
   console.log('listening on *:3001');
   console.log(process.env.NODE_ENV);
 });
-
-var newGames = [];
-var oldGames = [];
-var currentGames = [];
-
-var loopEvery = 150000;
-var nextInterval = 5000;
 
 function scrapeMatchPage() {
   setTimeout(function  () {
