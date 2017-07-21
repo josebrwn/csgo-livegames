@@ -22,9 +22,9 @@ var nextInterval = 2000;
 */
 var options = {
     method: 'POST',
-    url: 'http://jsonplaceholder.typicode.com/posts', // dummy
+    // url: 'http://jsonplaceholder.typicode.com/posts', // dummy
     // url: '***REMOVED***', // local
-    // url: '***REMOVED***', // staging
+    url: '***REMOVED***', // staging
     // url: '***REMOVED***', // production
     headers: {
         'cache-control': 'no-cache',

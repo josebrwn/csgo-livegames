@@ -4,7 +4,7 @@ var CircularJSON = require('circular-json');
 var self = this; // 'this', the child process
 self.time = 0;
 self.interval; // time remaining.
-var maxInactive = 1800; // 2017-07-20. has to be 20+ minutes.
+var maxInactive = 3600; // 1 hr
 var tick = 300; // remaining inactive alert
 var oldMessage = '';
 
