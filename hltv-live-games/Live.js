@@ -39,9 +39,9 @@ module.exports.getLiveGames = (callback) => {
         });
       }
       else {
-          // body is null or empty
+          // body is null or empty; allow the empty result so that it can be handled.
           console.log('WARNING', 'cheerio: body is null or empty');
-          callback([]);
+          callback();
       }
 
     }

@@ -14,7 +14,7 @@ var newGames = [];
 var oldGames = [];
 var currentGames = [];
 
-var loopEvery = 150000;
+var loopEvery = 150000; // ms
 var nextInterval = 2000;
 
 /*
@@ -24,8 +24,8 @@ var options = {
     method: 'POST',
     // url: 'http://jsonplaceholder.typicode.com/posts', // dummy
     // url: '***REMOVED***', // local
-    // url: '***REMOVED***', // staging
-    url: '***REMOVED***', // production
+    url: '***REMOVED***', // staging
+    // url: '***REMOVED***', // production
     headers: {
         'cache-control': 'no-cache',
         'content-type': 'application/json'
@@ -48,19 +48,27 @@ function scrapeMatchPage() {
     livegames.getLiveGames((games, err) => {
       if (err) {
         console.log('WARNING', err);
+        nextInterval = nextInterval * 2;
         return; // oldGames remains fixed
       }
       else {
         currentGames = [];
         newGames = [];
         finishedGames = [];
-        try {
-          games.forEach(function(element) {
-            currentGames.push(parseInt(element.list_id,10)); // must be int
-          });
+        if (games) {
+          try {
+            games.forEach(function(element) {
+              currentGames.push(parseInt(element.list_id,10)); // must be int
+            });
+          }
+          catch (e) {
+            console.log('WARNING', e);
+            nextInterval = nextInterval * 2;
+            return; // oldGames remains fixed
+          }
         }
-        catch (e) {
-          console.log('WARNING', e);
+        else {
+          nextInterval = nextInterval * 2;
           return; // oldGames remains fixed
         }
       }
@@ -84,7 +92,6 @@ function scrapeMatchPage() {
         post newGames to the API
       */
       if (newGames.length > 0) {
-
         var newGamesJSON = '{ "newGames": [' + newGames + '] }';
         if (IsJsonString(newGamesJSON)) {
           options.body = newGamesJSON;
@@ -112,6 +119,7 @@ function scrapeMatchPage() {
           console.log('WARNING', newGamesJSON);
         }
       }
+
       /*
         post finishedGames to the API
       */
@@ -144,13 +152,13 @@ function scrapeMatchPage() {
         }
       }
 
+      /*
+        post livescores to the API
+      */
       if (newGames.length > 0) {
         var child = cp.fork('./childProcess.js', [newGames]);
         // The only events you can receive from the child process are error, exit, disconnect, close, and message.
         child.on('message', function(data) {
-          /*
-            post livescores to the API
-          */
           if (IsJsonString(data)) {
             data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is also handled in csgomapslookup
             options.body = data;
@@ -168,9 +176,7 @@ function scrapeMatchPage() {
                 else {
                   var bodyJson = CircularJSON.parse(body);
                   console.log(CircularJSON.stringify(bodyJson));
-                  // if (bodyJson["Message"] !== null) {
-                    lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
-                  // }
+                  lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
                 }
               }
             });
@@ -178,17 +184,16 @@ function scrapeMatchPage() {
           else {
             console.log('INFORMATION', data);
           }
-        }); // child
-      } // if newGames
+        });
+      }
       oldGames = currentGames; // always reset oldGames
-    }); // getLiveGames
+    });
     scrapeMatchPage();
-  }, nextInterval); // setTimeout
-  nextInterval = loopEvery;
-} // scrapeMatchPage
+    nextInterval = loopEvery; // reset nextInterval
+  }, nextInterval);
+}
 
 scrapeMatchPage();
-// setInterval(scrapeMatchPage,loopEvery);
 
 lg.on('connection', function(socket){
   console.log( 'User ' + socket.id + ' connected' );
