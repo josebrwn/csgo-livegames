@@ -7,37 +7,43 @@ module.exports.getLiveGames = (callback) => {
     if (err) {
       callback(err);
     }
-    // TODO - periodic TypeError: Cannot read property 'parent' of undefined
+
     try {
-      var $ = cheerio.load(body);
+      if(body) {
+        var $ = cheerio.load(body);
+        var $live_matches = $('.live-match');
+        var results = [];
+        async.each($live_matches, ($m, next) => {
+          const $ = cheerio.load($m);
+          $('a.a-reset').each((index, element) => {
+            const game = {};
+            game.status = 'live';
+            game.match_url = `https://www.hltv.org${(element.attribs.href)}`;
+            game.list_id = element.attribs.href.match(/(\d+)/)[0]; // regex: first string of numbers
+            // game.list_id = $('table').attr('id', 'data-livescore-match').data('livescoreMatch'); // superfancy
+            game.event_name = $('.event-name').eq(0).text();
+            game.match_team1 = $('.team-name').eq(0).text();
+            game.match_team2 = $('.team-name').eq(1).text();
 
-      var $live_matches = $('.live-match');
-      var results = [];
-
-      async.each($live_matches, ($m, next) => {
-        const $ = cheerio.load($m);
-        $('a.a-reset').each((index, element) => {
-          const game = {};
-          game.status = 'live';
-          game.match_url = `https://www.hltv.org${(element.attribs.href)}`;
-          game.list_id = element.attribs.href.match(/(\d+)/)[0]; // regex: first string of numbers
-          // game.list_id = $('table').attr('id', 'data-livescore-match').data('livescoreMatch'); // superfancy
-          game.event_name = $('.event-name').eq(0).text();
-          game.match_team1 = $('.team-name').eq(0).text();
-          game.match_team2 = $('.team-name').eq(1).text();
-
-          // game.match_team1_id = $('img.logo').attribs.src.match(/(\d+)/)[0];  // TODO. TO HERE.
-          results.push(game);
+            // game.match_team1_id = $('img.logo').attribs.src.match(/(\d+)/)[0];  // TODO. TO HERE.
+            results.push(game);
+          });
+          next();
+        } // async.each
+        , (err) => {
+          if (err) {
+            callback(err);
+          } else {
+            callback(results);
+          }
         });
-        next();
-      } // async.each
-      , (err) => {
-        if (err) {
-          callback(err);
-        } else {
-          callback(results);
-        }
-      });
+      }
+      else {
+          // body is null or empty
+          console.log('WARNING', 'cheerio: body is null or empty');
+          callback([]);
+      }
+
     }
     catch (e) {
       console.log(e);

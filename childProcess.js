@@ -4,7 +4,7 @@ var CircularJSON = require('circular-json');
 var self = this; // 'this', the child process
 self.time = 0;
 self.interval; // time remaining.
-var maxInactive = 900; // 2017-07-19 changed to 15 min.
+var maxInactive = 1800; // 2017-07-20. has to be 20+ minutes.
 var tick = 300; // remaining inactive alert
 var oldMessage = '';
 
@@ -28,7 +28,7 @@ var setInactivityTimer = function(time) {
       catch (e) {console.log(newGames + ' exiting due to inactivity');}
       throw new Error('exiting'); // child self-destructs
     }
-  }, 1000);
+  }, 10000); // 10 seconds
 };
 
 try {process.send('Launching new child process, newGames = ' + newGames);}
