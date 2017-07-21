@@ -24,8 +24,8 @@ var options = {
     method: 'POST',
     // url: 'http://jsonplaceholder.typicode.com/posts', // dummy
     // url: '***REMOVED***', // local
-    // url: '***REMOVED***', // staging
-    url: '***REMOVED***', // production
+    url: '***REMOVED***', // staging
+    // url: '***REMOVED***', // production
     headers: {
         'cache-control': 'no-cache',
         'content-type': 'application/json'
@@ -169,9 +169,9 @@ function scrapeMatchPage() {
                 else {
                   var bodyJson = CircularJSON.parse(body);
                   console.log(CircularJSON.stringify(bodyJson));
-                  if (bodyJson["Message"] === null) {
+                  // if (bodyJson["Message"] !== null) {
                     lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
-                  }
+                  // }
                 }
               }
             });
