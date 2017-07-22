@@ -48,9 +48,7 @@ process.on('message', (msg) => {
     finishedGames = leftDisjoin(currentGames, _arr["currentGames"]);
     currentGames = leftDisjoin(currentGames, finishedGames);
   }
-  catch (e) {
-    catch (e) {console.log(e);}
-  }
+  catch (e) {console.log(e);}
   if (currentGames.length === 0) {
     try {process.send(origGames + ' exiting, all games finished');}
     catch (e) {console.log(e);}
