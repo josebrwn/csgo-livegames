@@ -3,6 +3,7 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http); // use io.close() to disconnect all users dynamically
+var lg = io.of('/livegames');
 
 const livegames = require('./hltv-live-games');
 var Livescore = require('./hltv-livescore');
@@ -26,8 +27,8 @@ var options = {
     method: 'POST',
     // url: 'http://jsonplaceholder.typicode.com/posts', // dummy
     // url: '***REMOVED***', // local
-    // url: '***REMOVED***', // staging
-    url: '***REMOVED***', // production
+    url: '***REMOVED***', // staging
+    // url: '***REMOVED***', // production
     headers: {
         'cache-control': 'no-cache',
         'content-type': 'application/json'
@@ -35,7 +36,13 @@ var options = {
     timeout: 10000 // 10 seconds. default is 120000
 };
 
-var lg = io.of('/livegames');
+// the current UTC date and time. NB: HLTV is on Central European Time (CET or CEDT).
+var currentTime = () => {
+  _time = new Date().toISOString().
+  replace(/T/, ' ').    // replace T with a space
+  replace(/\..+/, '');
+  return _time;
+};
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -49,7 +56,7 @@ function scrapeMatchPage() {
   setTimeout(function  () {
     livegames.getLiveGames((games, err) => {
       if (err) {
-        console.log('WARNING', err);
+        console.log('WARNING', currentTime(), err);
         nextInterval = nextInterval * 2;
         return; // oldGames remains fixed
       }
@@ -64,13 +71,13 @@ function scrapeMatchPage() {
             });
           }
           catch (e) {
-            console.log('WARNING', e);
+            console.log('WARNING', currentTime(), e);
             nextInterval = nextInterval * 2;
             return; // oldGames remains fixed
           }
         }
         else {
-          console.log('WARNING', 'games: ', games);
+          console.log('WARNING', currentTime(), 'games: ', games);
           nextInterval = nextInterval * 2;
           return; // oldGames remains fixed
         }
@@ -78,6 +85,7 @@ function scrapeMatchPage() {
       newGames = leftDisjoin(currentGames, oldGames);
       finishedGames = leftDisjoin(oldGames, currentGames);
       currentGamesJSON = '{ "currentGames": [' + currentGames + '] }';
+      console.log(currentTime());
       console.log ('current games:', currentGames);
       lg.emit('msg_to_client', currentGamesJSON);
 

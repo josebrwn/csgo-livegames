@@ -40,7 +40,7 @@ var setInactivityTimer = function(time) {
   }, timer);
 };
 
-// child send OK and expects message containing any current games in format '{ "currentGames": [] }'
+// new array of current games, expects format '{ "currentGames": [] }'
 process.on('message', (msg) => {
   // compare the two arrays, when none is left of the original set, exit.
   try {

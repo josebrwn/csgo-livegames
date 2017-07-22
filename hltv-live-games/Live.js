@@ -5,7 +5,17 @@ var cheerio = require("cheerio");
 module.exports.getLiveGames = (callback) => {
   request('https://www.hltv.org/matches', (err, response, body) => {
     if (err) {
-      callback(err);
+      // { [Error: socket hang up] code: 'ECONNRESET' }
+      // https://stackoverflow.com/questions/17245881/node-js-econnreset/17637900
+      // HACK
+      if (err.toString().indexOf('ECONNRESET') > 0) {
+        console.log('ERROR', 'ECONNRESET detected!');
+        throw new Error('exiting'); // parent self-destructs
+      }
+      else {
+        console.log('WARNING', 'request: ', err);
+        callback();
+      }
     }
 
     try {
@@ -32,7 +42,8 @@ module.exports.getLiveGames = (callback) => {
         } // async.each
         , (err) => {
           if (err) {
-            callback(err);
+            console.log('WARNING', 'async: ', err);
+            callback();
           } else {
             callback(results);
           }
@@ -46,8 +57,8 @@ module.exports.getLiveGames = (callback) => {
 
     }
     catch (e) {
-      console.log(e);
-      callback(e);
+      console.log('WARNING', 'cheerio: ', err);
+      callback();
     }
   }); // request
 
