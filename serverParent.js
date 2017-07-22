@@ -26,8 +26,8 @@ var options = {
     method: 'POST',
     // url: 'http://jsonplaceholder.typicode.com/posts', // dummy
     // url: '***REMOVED***', // local
-    // url: '***REMOVED***', // staging
-    url: '***REMOVED***', // production
+    url: '***REMOVED***', // staging
+    // url: '***REMOVED***', // production
     headers: {
         'cache-control': 'no-cache',
         'content-type': 'application/json'
@@ -57,7 +57,7 @@ function scrapeMatchPage() {
         currentGames = [];
         newGames = [];
         finishedGames = [];
-        if (games) {
+        if (games instanceof Array) { // theory, err is called back, not parseable
           try {
             games.forEach(function(element) {
               currentGames.push(parseInt(element.list_id,10)); // must be int
@@ -70,6 +70,7 @@ function scrapeMatchPage() {
           }
         }
         else {
+          console.log('WARNING', 'games: ', games);
           nextInterval = nextInterval * 2;
           return; // oldGames remains fixed
         }
@@ -129,7 +130,6 @@ function scrapeMatchPage() {
         var finishedGamesJSON = '{ "finishedGames": [' + finishedGames + '] }';
         if (IsJsonString(finishedGamesJSON)) {
           options.body = finishedGamesJSON;
-          console.log(finishedGamesJSON);
           lg.emit('msg_to_client', finishedGamesJSON);
           request(options, function(error, response, body) {
             if (error) {

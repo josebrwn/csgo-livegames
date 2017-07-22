@@ -25,7 +25,7 @@ var setInactivityTimer = function(time) {
     if (_s % tick === 0 && _s > -1) {
 
       try {process.send(origGames + ' inactive time remaining ' + self.time);}
-      catch (e) {console.log(origGames + ' inactive time remaining ' + self.time);}
+      catch (e) {console.log(e);}
 
       // request current games
       try {process.send('current_games');} // request new array of current games.
@@ -34,7 +34,7 @@ var setInactivityTimer = function(time) {
 
     if (_s <= 0) {
       try {process.send(origGames + ' exiting due to inactivity');}
-      catch (e) {console.log(origGames + ' exiting due to inactivity');}
+      catch (e) {console.log(e);}
       throw new Error('exiting'); // child self-destructs
     }
   }, timer);
@@ -49,22 +49,22 @@ process.on('message', (msg) => {
     currentGames = leftDisjoin(currentGames, finishedGames);
   }
   catch (e) {
-    console.log('WARNING', e);
+    catch (e) {console.log(e);}
   }
   if (currentGames.length === 0) {
-    try {process.send(origGames + ' exiting, all games finished`');}
-    catch (e) {console.log(origGames + ' exiting, all games finished`');}
+    try {process.send(origGames + ' exiting, all games finished');}
+    catch (e) {console.log(e);}
     throw new Error('exiting'); // child self-destructs
   }
   else {
     try {process.send(currentGames + ' still running');}
-    catch (e) {console.log( currentGames + ' still running');}
+    catch (e) {console.log(e);}
   }
 });
 
 
 try {process.send('Launching new child process, currentGames = ' + currentGames);}
-catch (e) {console.log('Launching new child process, currentGames = ' + currentGames);}
+catch (e) {console.log(e);}
 
 var live = new Livescore({
   gamesList: currentGames
@@ -74,7 +74,7 @@ var live = new Livescore({
 live.on('raw', function(data) {
   if (oldMessage != data) {
     try {process.send(CircularJSON.stringify(data, null, 2));}
-    catch (e) {console.log(CircularJSON.stringify(data, null, 2));}
+    catch (e) {console.log(e);}
     oldMessage = data;
     setInactivityTimer(maxInactive);
   }
