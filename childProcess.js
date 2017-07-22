@@ -4,11 +4,14 @@ var CircularJSON = require('circular-json');
 var self = this; // 'this', the child process
 self.time = 0;
 self.interval; // time remaining.
-var maxInactive = 3600; // 1 hr
-var tick = 300; // remaining inactive alert
+var maxInactive = 3600; // loops
+var tick = 90; // check every Nth loop. tick * timer < loopEvery / 2
+var timer = 1000; // ms
 var oldMessage = '';
 
-const newGames = args.split(',').map(Number).filter(Boolean); // has to be INT array
+var currentGames = args.split(',').map(Number).filter(Boolean); // has to be INT array
+var finishedGames = [];
+const origGames = currentGames;
 
 // call this whenever something happens. emit periodically. if inactive, exits.
 var setInactivityTimer = function(time) {
@@ -20,22 +23,51 @@ var setInactivityTimer = function(time) {
     self.time = self.time - 1;
     _s = Number(self.time);
     if (_s % tick === 0 && _s > -1) {
-      try {process.send(newGames + ' inactive time remaining ' + self.time);}
-      catch (e) {console.log(newGames + ' inactive time remaining ' + self.time);}
+
+      try {process.send(origGames + ' inactive time remaining ' + self.time);}
+      catch (e) {console.log(origGames + ' inactive time remaining ' + self.time);}
+
+      // request current games
+      try {process.send('current_games');} // request new array of current games.
+      catch (e) {console.log(e);}
     }
+
     if (_s <= 0) {
-      try {process.send(newGames + ' exiting due to inactivity');}
-      catch (e) {console.log(newGames + ' exiting due to inactivity');}
+      try {process.send(origGames + ' exiting due to inactivity');}
+      catch (e) {console.log(origGames + ' exiting due to inactivity');}
       throw new Error('exiting'); // child self-destructs
     }
-  }, 10000); // 10 seconds
+  }, timer);
 };
 
-try {process.send('Launching new child process, newGames = ' + newGames);}
-catch (e) {console.log('Launching new child process, newGames = ' + newGames);}
+// child send OK and expects message containing any current games in format '{ "currentGames": [] }'
+process.on('message', (msg) => {
+  // compare the two arrays, when none is left of the original set, exit.
+  try {
+    var _arr = JSON.parse(msg);
+    finishedGames = leftDisjoin(currentGames, _arr["currentGames"]);
+    currentGames = leftDisjoin(currentGames, finishedGames);
+  }
+  catch (e) {
+    console.log('WARNING', e);
+  }
+  if (currentGames.length === 0) {
+    try {process.send(origGames + ' exiting, all games finished`');}
+    catch (e) {console.log(origGames + ' exiting, all games finished`');}
+    throw new Error('exiting'); // child self-destructs
+  }
+  else {
+    try {process.send(currentGames + ' still running');}
+    catch (e) {console.log( currentGames + ' still running');}
+  }
+});
+
+
+try {process.send('Launching new child process, currentGames = ' + currentGames);}
+catch (e) {console.log('Launching new child process, currentGames = ' + currentGames);}
 
 var live = new Livescore({
-  gamesList: newGames
+  gamesList: currentGames
 });
 
 // raw data from socketio-wildcard
@@ -47,3 +79,9 @@ live.on('raw', function(data) {
     setInactivityTimer(maxInactive);
   }
 });
+
+// efficient ES6 function to find difference between 2 arrays
+function leftDisjoin(newArr, oldArr) {
+  var oldSet = new Set(oldArr);
+  return newArr.filter(function(x) { return !oldSet.has(x); });
+}
