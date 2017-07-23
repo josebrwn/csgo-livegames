@@ -1,9 +1,10 @@
 var async = require("async");
 var request = require("request");
 var cheerio = require("cheerio");
+var url = 'https://www.hltv.org/matches'; // hltv must include https and www
 
 module.exports.getLiveGames = (callback) => {
-  request('https://www.hltv.org/matches', (err, response, body) => {
+  request(url, (err, response, body) => {
     if (err) {
       // { [Error: socket hang up] code: 'ECONNRESET' }
       // https://stackoverflow.com/questions/17245881/node-js-econnreset/17637900
