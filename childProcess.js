@@ -35,7 +35,7 @@ var setInactivityTimer = function(time) {
     if (_s <= 0) {
       try {process.send(origGames + ' exiting due to inactivity');}
       catch (e) {console.log(e);}
-      throw new Error('exiting'); // child self-destructs
+      process.exit(1); // child self-destructs
     }
   }, timer);
 };
@@ -52,7 +52,7 @@ process.on('message', (msg) => {
   if (currentGames.length === 0) {
     try {process.send(origGames + ' exiting, all games finished');}
     catch (e) {console.log(e);}
-    throw new Error('exiting'); // child self-destructs
+    process.exit(1); // child self-destructs
   }
   else {
     try {process.send(currentGames + ' still running');}
