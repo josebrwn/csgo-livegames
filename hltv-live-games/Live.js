@@ -9,7 +9,7 @@ module.exports.getLiveGames = (callback) => {
       // { [Error: socket hang up] code: 'ECONNRESET' }
       // https://stackoverflow.com/questions/17245881/node-js-econnreset/17637900
       // HACK
-      if (err.toString().indexOf('ECONNRESET') > 0) {
+      if (err.code === 'ECONNRESET') {
         console.log('ERROR', 'ECONNRESET detected!');
         throw new Error('exiting'); // parent self-destructs
       }
