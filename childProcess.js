@@ -57,7 +57,10 @@ process.on('message', (msg) => {
     finishedGames = leftDisjoin(currentGames, _arr["currentGames"]);
     currentGames = leftDisjoin(currentGames, finishedGames);
   }
-  catch (e) {console.log(e);}
+  catch (e) {
+    console.log('childProcess exiting: error on parse message', e);
+    process.exit(1);
+  }
   if (currentGames.length === 0) {
     try {process.send(origGames + ' exiting, all games finished');}
     catch (e) {
