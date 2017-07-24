@@ -1,7 +1,7 @@
 var async = require("async");
 var request = require("request");
 var cheerio = require("cheerio");
-var url = 'https://www.hltv.org/matches'; // hltv must include https and www
+var url = 'https://www.hltv.org/matches'; //  hltv must include https and www
 
 module.exports.getLiveGames = (callback) => {
   request(url, (err, response, body) => {
@@ -10,12 +10,12 @@ module.exports.getLiveGames = (callback) => {
       // https://stackoverflow.com/questions/17245881/node-js-econnreset/17637900
       // HACK
       if (err.code === 'ECONNRESET') {
-        console.log('ERROR', 'ECONNRESET detected!');
+        console.log('WARNING', 'ECONNRESET detected!');
         throw new Error('exiting'); // parent self-destructs
       }
       else {
         console.log('WARNING', 'request: ', err);
-        callback();
+        return callback();
       }
     }
 

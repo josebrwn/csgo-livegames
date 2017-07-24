@@ -25,16 +25,25 @@ var setInactivityTimer = function(time) {
     if (_s % tick === 0 && _s > -1) {
 
       try {process.send(origGames + ' inactive time remaining ' + self.time);}
-      catch (e) {console.log(e);}
+      catch (e) {
+        console.log('childProcess exiting: error on time remaining', e);
+        process.exit(1);
+      }
 
       // request current games
       try {process.send('current_games');} // request new array of current games.
-      catch (e) {console.log(e);}
+      catch (e) {
+        console.log('childProcess exiting: error on current_games', e);
+        process.exit(1);
+      }
     }
 
     if (_s <= 0) {
       try {process.send(origGames + ' exiting due to inactivity');}
-      catch (e) {console.log(e);}
+      catch (e) {
+        console.log('childProcess exiting: error on exiting', e);
+        process.exit(1);
+      }
       process.exit(1); // child self-destructs
     }
   }, timer);
@@ -51,18 +60,26 @@ process.on('message', (msg) => {
   catch (e) {console.log(e);}
   if (currentGames.length === 0) {
     try {process.send(origGames + ' exiting, all games finished');}
-    catch (e) {console.log(e);}
-    process.exit(1); // child self-destructs
+    catch (e) {
+      console.log('childProcess exiting: error on finished', e);
+      process.exit(1);
+    }
   }
   else {
     try {process.send(currentGames + ' still running');}
-    catch (e) {console.log(e);}
+    catch (e) {
+      console.log('childProcess exiting: error on still running', e);
+      process.exit(1);
+    }
   }
 });
 
 
 try {process.send('Launching new child process, currentGames = ' + currentGames);}
-catch (e) {console.log(e);}
+catch (e) {
+  console.log('childProcess exiting: error on Launching', e);
+  process.exit(1);
+}
 
 var live = new Livescore({
   gamesList: currentGames
@@ -72,7 +89,10 @@ var live = new Livescore({
 live.on('raw', function(data) {
   if (oldMessage != data) {
     try {process.send(CircularJSON.stringify(data, null, 2));}
-    catch (e) {console.log(e);}
+    catch (e) {
+      console.log('childProcess exiting: error on raw message', e);
+      process.exit(1);
+    }
     oldMessage = data;
     setInactivityTimer(maxInactive);
   }
