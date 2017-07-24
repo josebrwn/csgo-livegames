@@ -4,11 +4,12 @@ var cheerio = require("cheerio");
 var url = 'https://www.hltv.org/matches'; //  hltv must include https and www
 
 module.exports.getLiveGames = (callback) => {
-  request(url, (err, response, body) => {
+  request({ uri: url, forever: false }, (err, response, body) => { // disable keepAlive
     if (err) {
-      // { [Error: socket hang up] code: 'ECONNRESET' }
-      // https://stackoverflow.com/questions/17245881/node-js-econnreset/17637900
-      // HACK
+      /*
+        { [Error: socket hang up] code: 'ECONNRESET' } 100 % CPU starts a few minutes prior to this error.
+        childProcesses continue to exist.
+      */
       if (err.code === 'ECONNRESET') {
         console.log('WARNING', 'ECONNRESET detected!');
         throw new Error('exiting'); // parent self-destructs
