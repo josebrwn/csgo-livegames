@@ -62,7 +62,10 @@ process.on('message', (msg) => {
     process.exit(1);
   }
   if (currentGames.length === 0) {
-    try {process.send(origGames + ' exiting, all games finished');}
+    try {
+      process.send(origGames + ' exiting, all games finished');
+      process.exit(1);
+    }
     catch (e) {
       console.log('childProcess exiting: error on finished', e);
       process.exit(1);
