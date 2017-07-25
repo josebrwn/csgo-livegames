@@ -2,7 +2,7 @@
 
 var app = require('express')();
 var http = require('http').Server(app);
-var io = require('socket.io')(http); // use io.close() to disconnect all users dynamically
+var io = require('socket.io')(http);
 var lg = io.of('/livegames');
 
 const livegames = require('./hltv-live-games');
@@ -19,16 +19,11 @@ var currentGamesJSON = '{ "currentGames": [] }'; // broadcast to all children
 
 var loopEvery = 180000; // ms
 var nextInterval = 0;
+var api_url = process.env.API_URL || 'http://jsonplaceholder.typicode.com/posts';
 
-/*
-  avoid running simultaneously from multiple servers when connected to the API
-*/
 var options = {
     method: 'POST',
-    // url: 'http://jsonplaceholder.typicode.com/posts', // dummy
-    // url: '***REMOVED***', // local
-    // url: '***REMOVED***', // staging
-    url: '***REMOVED***', // production
+    url: api_url,
     headers: {
         'cache-control': 'no-cache',
         'content-type': 'application/json'
@@ -49,7 +44,8 @@ app.get('/', function(req, res){
 });
 http.listen(3001, function(){
   console.log('listening on *:3001');
-  console.log(process.env.NODE_ENV);
+  console.log('environment', process.env.NODE_ENV);
+  console.log('API_URL', api_url);
 });
 
 function scrapeMatchPage() {
@@ -64,7 +60,7 @@ function scrapeMatchPage() {
         currentGames = [];
         newGames = [];
         finishedGames = [];
-        if (games instanceof Array) { // theory, err is called back, not parseable
+        if (games instanceof Array) {
           try {
             games.forEach(function(element) {
               currentGames.push(parseInt(element.list_id,10)); // must be int
@@ -169,7 +165,7 @@ function scrapeMatchPage() {
         post livescores to the API
       */
       if (newGames.length > 0) {
-        var child = cp.fork('./childProcess.js', [newGames]);
+        var child = cp.fork(__dirname+'/childProcess.js', [newGames]);
         // The only events you can receive from the child process are error, exit, disconnect, close, and message.
         child.on('message', function(data) {
           if (data === 'current_games') {
