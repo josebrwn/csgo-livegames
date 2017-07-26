@@ -10,9 +10,10 @@ module.exports.getLiveGames = (callback) => {
         { [Error: socket hang up] code: 'ECONNRESET' } 100 % CPU starts a few minutes prior to this error.
         childProcesses continue to exist.
       */
-      if (err.code === 'ECONNRESET') {
-        console.log('WARNING', 'ECONNRESET detected!');
-        throw new Error('exiting'); // parent self-destructs
+      if (err.code === 'ECONNREFUSED') {
+        var t = currentTime();
+        console.log('WARNING', 'ECONNRESET detected!', t);
+        throw new Error('exiting ' + t); // parent self-destructs
       }
       else {
         console.log('WARNING', 'request: ', err);
@@ -137,3 +138,10 @@ module.exports.getUpcomingGames = (callback) => {
     }
   }); // request
 }; // module.exports
+
+var currentTime = () => {
+  _time = new Date().toISOString().
+  replace(/T/, ' ').    // replace T with a space
+  replace(/\..+/, '');
+  return _time;
+};

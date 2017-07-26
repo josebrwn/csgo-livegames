@@ -1,0 +1,30 @@
+{
+  "apps" : [
+    {
+      "name": "livegames",
+      "script": "/temp/livegames/serverParent.js",
+      "cwd": "/temp/livescore/",
+      "watch": true,
+      "env": {
+        "PORT": 3001,
+        "NODE_ENV": "development",
+        "API_URL": "http://jsonplaceholder.typicode.com/posts"
+      },
+      "env_development": {
+        "PORT": 3001,
+        "NODE_ENV": "development",
+        "API_URL": "***REMOVED***"
+      },
+      "env_staging": {
+        "PORT": 3001,
+        "NODE_ENV": "production",
+        "API_URL": "***REMOVED***"
+      },
+      "env_production": {
+        "PORT": 3001,
+        "NODE_ENV": "production",
+        "API_URL": "***REMOVED***"
+      }
+    }
+  ]
+}
