@@ -7,10 +7,10 @@ module.exports.getLiveGames = (callback) => {
   request({ uri: url, forever: false }, (err, response, body) => { // disable keepAlive
     if (err) {
       /*
-        { [Error: socket hang up] code: 'ECONNRESET' } 100 % CPU starts a few minutes prior to this error.
-        childProcesses continue to exist.
+        { [Error: socket hang up] code: 'ECONNRESET' }
+        use ECONNREFUSED for testing on localhost
       */
-      if (err.code === 'ECONNREFUSED') {
+      if (err.code === 'ECONNRESET') {
         var t = currentTime();
         console.log('WARNING', 'ECONNRESET detected!', t);
         throw new Error('exiting ' + t); // parent self-destructs
