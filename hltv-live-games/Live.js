@@ -4,11 +4,12 @@ var cheerio = require("cheerio");
 var url = 'https://www.hltv.org/matches'; //  hltv must include https and www
 
 module.exports.getLiveGames = (callback) => {
-  request({ uri: url, forever: false }, (err, response, body) => { // disable keepAlive
+  request({ uri: url, timeout: 10000, forever: false }, (err, response, body) => { // disable keepAlive
     if (err) {
       /*
         { [Error: socket hang up] code: 'ECONNRESET' }
         use ECONNREFUSED for testing on localhost
+        ETIMEDOUT will indicate the timeout was exceeded
       */
       if (err.code === 'ECONNRESET') {
         var t = currentTime();
