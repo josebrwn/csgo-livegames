@@ -17,7 +17,7 @@ var currentGames = [];
 var finishedGames = [];
 var currentGamesJSON = '{ "currentGames": [] }'; // broadcast to all children
 
-var loopEvery = 180000; // ms
+var loopEvery = 120000; // ms
 var nextInterval = 0;
 var api_url = process.env.API_URL || 'http://jsonplaceholder.typicode.com/posts';
 
