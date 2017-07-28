@@ -5,7 +5,7 @@ var self = this; // 'this', the child process
 self.time = 0;
 self.interval; // time remaining.
 var maxInactive = 3600; // loops
-var tick = 90; // check every Nth loop. tick * timer < loopEvery / 2
+var tick = 60; // check every Nth loop. tick * timer < loopEvery / 2
 var timer = 1000; // ms
 var oldMessage = '';
 

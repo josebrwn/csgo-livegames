@@ -17,9 +17,10 @@ var currentGames = [];
 var finishedGames = [];
 var currentGamesJSON = '{ "currentGames": [] }'; // broadcast to all children
 
-var loopEvery = 120000; // ms
+var loopEvery = 120000; // ms. childProcess ticks must be less than half this value. TODO
 var nextInterval = 0;
 var api_url = process.env.API_URL || 'http://jsonplaceholder.typicode.com/posts';
+var port = process.env.PORT || 3001;
 
 var options = {
     method: 'POST',
@@ -31,19 +32,11 @@ var options = {
     timeout: 10000 // 10 seconds. default is 120000
 };
 
-// the current UTC date and time. NB: HLTV is on Central European Time (CET or CEDT).
-var currentTime = () => {
-  _time = new Date().toISOString().
-  replace(/T/, ' ').    // replace T with a space
-  replace(/\..+/, '');
-  return _time;
-};
-
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
-http.listen(3001, function(){
-  console.log('listening on *:3001');
+http.listen(port, function(){
+  console.log('listening on *:'+port);
   console.log('environment', process.env.NODE_ENV);
   console.log('API_URL', api_url);
 });
@@ -239,3 +232,10 @@ function IsJsonString(str) {
     }
     return true;
 }
+// the current UTC date and time. NB: HLTV is on Central European Time (CET or CEDT).
+var currentTime = () => {
+  _time = new Date().toISOString().
+  replace(/T/, ' ').    // replace T with a space
+  replace(/\..+/, '');
+  return _time;
+};
