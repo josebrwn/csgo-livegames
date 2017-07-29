@@ -4,6 +4,7 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var lg = io.of('/livegames');
+var timers = require('./timers');
 
 const livegames = require('./hltv-live-games');
 var Livescore = require('./hltv-livescore');
@@ -11,14 +12,13 @@ var cp = require('child_process');
 var request = require("request");
 var CircularJSON = require('circular-json');
 
-var newGames = [];
 var oldGames = [];
-var currentGames = [];
-var finishedGames = [];
 var currentGamesJSON = '{ "currentGames": [] }'; // broadcast to all children
 
-var loopEvery = 120000; // ms. childProcess ticks must be less than half this value. TODO
-var nextInterval = 0;
+var loopEvery = timers["LOOP_EVERY_MS"]; // ms. childProcess ticks must be less than half this value.
+var nextInterval = timers["WAIT_MS"];
+
+// PM2 env vars
 var api_url = process.env.API_URL || 'http://jsonplaceholder.typicode.com/posts';
 var port = process.env.PORT || 3001;
 
@@ -29,8 +29,9 @@ var options = {
         'cache-control': 'no-cache',
         'content-type': 'application/json'
     },
-    timeout: 10000 // 10 seconds. default is 120000
+    timeout: timers["TIMEOUT_MS"] // default is 120000
 };
+
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -46,13 +47,12 @@ function scrapeMatchPage() {
     livegames.getLiveGames((games, err) => {
       if (err) {
         console.log('WARNING', currentTime(), err);
-        nextInterval = nextInterval * 2;
         return; // oldGames remains fixed
       }
       else {
-        currentGames = [];
-        newGames = [];
-        finishedGames = [];
+        var newGames = [];
+        var currentGames = [];
+        var finishedGames = [];
         if (games instanceof Array) {
           try {
             games.forEach(function(element) {
@@ -61,13 +61,11 @@ function scrapeMatchPage() {
           }
           catch (e) {
             console.log('WARNING', currentTime(), e);
-            nextInterval = nextInterval * 2;
             return; // oldGames remains fixed
           }
         }
         else {
           console.log('WARNING', currentTime(), 'games: ', games);
-          nextInterval = nextInterval * 2;
           return; // oldGames remains fixed
         }
       }
@@ -150,9 +148,7 @@ function scrapeMatchPage() {
           console.log('WARNING', finishedGamesJSON);
         }
       }
-      else {
-        finishedGamesJSON = '{ "finishedGames": [] }';
-      }
+
 
       /*
         post livescores to the API
@@ -201,11 +197,12 @@ function scrapeMatchPage() {
       nextInterval = loopEvery;
       scrapeMatchPage();
     }
+    // nextInterval is variable
     else {
       scrapeMatchPage();
       nextInterval = loopEvery;
     }
-  }, nextInterval);
+  }, nextInterval); // trigger an ECONNRESET here, set very short or undefined.
 }
 
 scrapeMatchPage();

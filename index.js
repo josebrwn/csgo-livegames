@@ -1,6 +1,8 @@
 // 'use strict'; // PROBLEM! TODO
 
 const livegames = require('./hltv-live-games');
+const timers = require('./timers');
+
 var logging = require('./logging');
 var Livescore = require('./hltv-livescore');
 var cp = require('child_process');

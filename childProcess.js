@@ -1,12 +1,13 @@
 var Livescore = require('./hltv-livescore');
 const args = process.argv[2];
 var CircularJSON = require('circular-json');
+var timers = require('./timers');
+
 var self = this; // 'this', the child process
 self.time = 0;
 self.interval; // time remaining.
-var maxInactive = 3600; // loops
-var tick = 60; // check every Nth loop. tick * timer < loopEvery / 2
-var timer = 1000; // ms
+var maxInactive = timers["MAX_INACTIVE"]; // loops
+var tick = timers["ALERT_EVERY_LOOP"]; // check every Nth loop. tick < loopEvery / 2
 var oldMessage = '';
 
 var currentGames = args.split(',').map(Number).filter(Boolean); // has to be INT array
@@ -46,7 +47,7 @@ var setInactivityTimer = function(time) {
       }
       process.exit(1); // child self-destructs
     }
-  }, timer);
+  }, 1000); // fixed at 1 sec.
 };
 
 // new array of current games, expects format '{ "currentGames": [] }'
