@@ -3,7 +3,7 @@
     {
       "name": "livegames",
       "script": "/home/***REMOVED***/livegames/serverParent.js",
-      "cwd": "/home/***REMOVED***/livescore/",
+      "cwd": "/home/***REMOVED***/livegames/",
       "watch": false,
       "env": {
         "PORT": 3001,

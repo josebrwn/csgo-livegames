@@ -28,13 +28,12 @@ module.exports.getLiveGames = (callback) => {
       const $ = cheerio.load(body);
       const $live_matches = $('.live-match');
       var results = [];
-      console.log('$live_matches.length', $live_matches.length);
+      console.log('matches', $live_matches.length);
 
       async.map($live_matches, ($m, next) => {
         // for each match in $live_matches, load it to $m
         const $ = cheerio.load($m);
         const _a = $('a.a-reset');
-
         _a.map((index, element) => {
           const game = {};
           game.status = 'live';
@@ -48,7 +47,7 @@ module.exports.getLiveGames = (callback) => {
           // game.match_team1_id = $('img.logo').attribs.src.match(/(\d+)/)[0];  // TODO. TO HERE.
           results.push(game);
         });
-        next(); 
+        next();
 
       }, (err) => {
         if (err) {
