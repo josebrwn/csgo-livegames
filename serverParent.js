@@ -172,7 +172,7 @@ function scrapeMatchPage() {
                   console.log('WARNING', error);
                 }
                 else {
-                  if (body === '"OK"' || body.indexOf('"ReturnCode":-1') > 0 ) { // hide misc errors from the client
+                  if (body === '"OK"' || body.indexOf('"ReturnCode":-1') > 0 || !IsJsonString(body) ) { // hide misc errors from the client
                     console.log(body);
                   }
                   else {
