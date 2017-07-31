@@ -4,8 +4,7 @@ var cheerio = require("cheerio");
 var url = 'https://www.hltv.org/matches'; //  hltv must include https and www
 
 module.exports.getLiveGames = (callback) => {
-  // timeout parameter works, not sure about the rest.
-  request({ uri: url, timeout: 10000, forever: false, keepAlive:false, maxSockets:1 }, (err, response, body) => {
+  request({ uri: url, timeout: 10000 }, (err, response, body) => {
     if (err) {
       /*
         { [Error: socket hang up] code: 'ECONNRESET' }
@@ -28,7 +27,6 @@ module.exports.getLiveGames = (callback) => {
       const $ = cheerio.load(body);
       const $live_matches = $('.live-match');
       var results = [];
-      console.log('matches', $live_matches.length);
 
       async.map($live_matches, ($m, next) => {
         // for each match in $live_matches, load it to $m

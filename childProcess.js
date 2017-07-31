@@ -14,6 +14,13 @@ var currentGames = args.split(',').map(Number).filter(Boolean); // has to be INT
 var finishedGames = [];
 const origGames = currentGames;
 
+/*
+childProcess asks for list of current game in every loop of the inactivity timer,
+Any finished games are removed until current games is empty. then origGames is reported
+back to serverParent.
+*/
+
+
 // call this whenever something happens. emit periodically. if inactive, exits.
 var setInactivityTimer = function(time) {
   clearInterval(self.interval);
@@ -25,14 +32,18 @@ var setInactivityTimer = function(time) {
     _s = Number(self.time);
     if (_s % tick === 0 && _s > -1) {
 
-      try {process.send(origGames + ' inactive time remaining ' + self.time);}
+      try {
+        process.send(origGames + ' inactive time remaining ' + self.time);
+      }
       catch (e) {
         console.log('childProcess exiting: error on time remaining', e);
         process.exit(1);
       }
 
       // request current games
-      try {process.send('current_games');} // request new array of current games.
+      try {
+          process.send('current_games');
+      } // request new array of current games.
       catch (e) {
         console.log('childProcess exiting: error on current_games', e);
         process.exit(1);
@@ -40,7 +51,9 @@ var setInactivityTimer = function(time) {
     }
 
     if (_s <= 0) {
-      try {process.send(origGames + ' exiting due to inactivity');}
+      try {
+          process.send(origGames + ' exiting due to inactivity');
+      }
       catch (e) {
         console.log('childProcess exiting: error on exiting', e);
         process.exit(1);
@@ -65,6 +78,7 @@ process.on('message', (msg) => {
   if (currentGames.length === 0) {
     try {
       process.send(origGames + ' exiting, all games finished');
+      process.send('process_exit'); // all list_id's may now be removed from childArray
       process.exit(1);
     }
     catch (e) {
@@ -82,7 +96,9 @@ process.on('message', (msg) => {
 });
 
 
-try {process.send('Launching new child process, currentGames = ' + currentGames);}
+try {
+  process.send('Launching new child process, currentGames = ' + currentGames);
+}
 catch (e) {
   console.log('childProcess exiting: error on Launching', e);
   process.exit(1);

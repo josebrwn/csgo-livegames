@@ -1,20 +1,20 @@
 // 'use strict'; // PROBLEM! TODO
 
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-var lg = io.of('/livegames');
-var timers = require('./timers');
-
+const app = require('express')();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+const timers = require('./timers');
 const livegames = require('./hltv-live-games');
-var Livescore = require('./hltv-livescore');
-var cp = require('child_process');
-var request = require("request");
-var CircularJSON = require('circular-json');
+const Livescore = require('./hltv-livescore');
+const cp = require('child_process');
+const request = require("request");
+const CircularJSON = require('circular-json');
 
-var oldGames = [];
+const lg = io.of('/livegames');
+
+var oldGames = []; // the previous run's currentGames
+var childArray = []; // the list_id's currently running in child processes
 var currentGamesJSON = '{ "currentGames": [] }'; // broadcast to all children
-
 var loopEvery = timers["LOOP_EVERY_MS"]; // ms. childProcess ticks must be less than half this value.
 var nextInterval = timers["WAIT_MS"];
 
@@ -84,6 +84,7 @@ function scrapeMatchPage() {
       console.log('old games:', oldGames);
       console.log('new games:', newGames);
       console.log('finished games:', finishedGames);
+      console.log('child array', childArray);
       console.log('connected users:', Object.keys(io.sockets.sockets));
 
       /*
@@ -91,31 +92,27 @@ function scrapeMatchPage() {
       */
       if (newGames.length > 0) {
         var newGamesJSON = '{ "newGames": [' + newGames + '] }';
-        if (IsJsonString(newGamesJSON)) {
-          options.body = newGamesJSON;
-          console.log(newGamesJSON);
-          lg.emit('msg_to_client', newGamesJSON);
-          request(options, function(error, response, body) {
-            if (error) {
-              console.log('WARNING', error);
+
+        options.body = newGamesJSON;
+        lg.emit('msg_to_client', newGamesJSON);
+        request(options, function(error, response, body) {
+          if (error) {
+            console.log('WARNING', error);
+          }
+          else {
+            if (body !== '"OK"') {
+              var bodyJson = CircularJSON.parse(body);
+              console.log(CircularJSON.stringify(bodyJson));
+              if (bodyJson["Message"] === null) {
+                lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
+              }
             }
             else {
-              if (body !== '"OK"') {
-                var bodyJson = CircularJSON.parse(body);
-                console.log(CircularJSON.stringify(bodyJson));
-                if (bodyJson["Message"] === null) {
-                  lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
-                }
-              }
-              else {
-                console.log(body);
-              }
+              console.log(body);
             }
-          });
-        }
-        else {
-          console.log('WARNING', newGamesJSON);
-        }
+          }
+        });
+
       }
 
       /*
@@ -123,30 +120,27 @@ function scrapeMatchPage() {
       */
       if (finishedGames.length > 0) {
         var finishedGamesJSON = '{ "finishedGames": [' + finishedGames + '] }';
-        if (IsJsonString(finishedGamesJSON)) {
-          options.body = finishedGamesJSON;
-          lg.emit('msg_to_client', finishedGamesJSON);
-          request(options, function(error, response, body) {
-            if (error) {
-              console.log('WARNING', error);
+
+        options.body = finishedGamesJSON;
+        lg.emit('msg_to_client', finishedGamesJSON);
+        request(options, function(error, response, body) {
+          if (error) {
+            console.log('WARNING', error);
+          }
+          else {
+            if (body !== '"OK"') {
+              var bodyJson = CircularJSON.parse(body);
+              console.log(CircularJSON.stringify(bodyJson));
+              if (bodyJson["Message"] === null) {
+                lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
+              }
             }
             else {
-              if (body !== '"OK"') {
-                var bodyJson = CircularJSON.parse(body);
-                console.log(CircularJSON.stringify(bodyJson));
-                if (bodyJson["Message"] === null) {
-                  lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
-                }
-              }
-              else {
-                console.log(body);
-              }
+              console.log(body);
             }
-          });
-        }
-        else {
-          console.log('WARNING', finishedGamesJSON);
-        }
+          }
+        });
+
       }
 
 
@@ -154,43 +148,52 @@ function scrapeMatchPage() {
         post livescores to the API
       */
       if (newGames.length > 0) {
-        var child = cp.fork(__dirname+'/childProcess.js', [newGames]);
-        // The only events you can receive from the child process are error, exit, disconnect, close, and message.
-        child.on('message', function(data) {
-          if (data === 'current_games') {
-            child.send(currentGamesJSON); // child requests list of current games
-          }
-          else {
-            if (IsJsonString(data)) {
-              data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is also handled in csgomapslookup
-              options.body = data;
-              data = CircularJSON.parse(data); // condensed but not truncated
-              console.log(CircularJSON.stringify(data));
-              lg.emit('msg_to_client', CircularJSON.stringify(data));
-              request(options, function(error, response, body) {
-                if (error) {
-                  console.log('WARNING', error);
-                }
-                else {
-                  if (body === '"OK"' || body.indexOf('"ReturnCode":-1') > 0 || !IsJsonString(body) ) { // hide misc errors from the client
-                    console.log(body);
-                  }
-                  else {
-                    var bodyJson = CircularJSON.parse(body);
-                    console.log(CircularJSON.stringify(bodyJson));
-                    lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
-                  }
-                }
-              });
+        const diff = leftDisjoin(newGames, childArray); // prevent double launch
+        if (diff.length > 0) {
+          childArray = childArray.concat(diff);
+          console.log('child array', childArray);
+          const child = cp.fork(__dirname+'/childProcess.js', [diff]);
+          // The only events you can receive from the child process are error, exit, disconnect, close, and message.
+          child.on('message', function(data) {
+            if (data === 'current_games') {
+                child.send(currentGamesJSON); // child requests list of current games
+            }
+            else if (data === 'process_exit') {
+              console.log('PROCESS EXIT', diff); // expect diff to be the const it was at launch
+              childArray = leftDisjoin(childArray, diff);
             }
             else {
-              console.log('INFORMATION', data);
+              if (IsJsonString(data)) {
+                data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is also handled in csgomapslookup
+                options.body = data;
+                data = CircularJSON.parse(data); // condensed but not truncated
+                console.log(CircularJSON.stringify(data));
+                lg.emit('msg_to_client', CircularJSON.stringify(data));
+                request(options, function(error, response, body) {
+                  if (error) {
+                    console.log('WARNING', error);
+                  }
+                  else {
+                    if (body === '"OK"' || body.indexOf('"ReturnCode":-1') > 0 || !IsJsonString(body) ) { // hide misc errors from the client
+                      console.log(body);
+                    }
+                    else {
+                      var bodyJson = CircularJSON.parse(body);
+                      console.log(CircularJSON.stringify(bodyJson));
+                      lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
+                    }
+                  }
+                });
+              }
+              else {
+                console.log('INFORMATION', data);
+              }
             }
-          }
-        });
-      }
+          }); // child.on
+        } // if diff
+      } // if newGames
       oldGames = currentGames; // always reset oldGames
-    });
+    }); // getLiveGames
 
     // immediately reset after first run
     if (nextInterval < loopEvery) {
