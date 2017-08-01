@@ -1,5 +1,5 @@
 // 'use strict'; // PROBLEM! TODO
-
+const tools = require('./tools');
 const livegames = require('./hltv-live-games');
 const timers = require('./timers');
 
@@ -41,8 +41,8 @@ function scrapeMatchPage() {
       oldGames = currentGames; // always reset oldGames
       return;
     }
-    newGames = leftDisjoin(currentGames, oldGames);
-    finishedGames = leftDisjoin(oldGames, currentGames);
+    newGames = tools.leftDisjoin(currentGames, oldGames);
+    finishedGames = tools.leftDisjoin(oldGames, currentGames);
     console.log ('current games:', currentGames);
     console.log('old games:', oldGames);
     console.log('new games:', newGames);
@@ -53,7 +53,7 @@ function scrapeMatchPage() {
     */
     if (newGames.length > 0) {
       var newGamesJSON = '{ "newGames": [' + newGames + '] }';
-      if (IsJsonString(newGamesJSON)) {
+      if (tools.IsJsonString(newGamesJSON)) {
         options.body = newGamesJSON;
         request(options, function(error, response, body) {
             if (error) throw new Error(error);
@@ -69,7 +69,7 @@ function scrapeMatchPage() {
     */
     if (finishedGames.length > 0) {
       var finishedGamesJSON = '{ "finishedGames": [' + finishedGames + '] }';
-      if (IsJsonString(finishedGamesJSON)) {
+      if (tools.IsJsonString(finishedGamesJSON)) {
         options.body = finishedGamesJSON;
         request(options, function(error, response, body) {
             if (error) throw new Error(error);
@@ -92,7 +92,7 @@ function scrapeMatchPage() {
         /*
           post livescores to the API
         */
-        if (IsJsonString(data)) {
+        if (tools.IsJsonString(data)) {
           options.body = data;
           request(options, function(error, response, body) {
               if (error) throw new Error(error);
@@ -111,19 +111,3 @@ function scrapeMatchPage() {
 // main entry point: execute the scraper immediately, repeat every N seconds
 scrapeMatchPage();
 setInterval(scrapeMatchPage,loopEvery);
-
-// efficient ES6 function to find difference between 2 arrays
-function leftDisjoin(newArr, oldArr) {
-  var oldSet = new Set(oldArr);
-  return newArr.filter(function(x) { return !oldSet.has(x); });
-}
-
-// the API probably expects well-formed JSON
-function IsJsonString(str) {
-    try {
-        JSON.parse(str);
-    } catch (e) {
-        return false;
-    }
-    return true;
-}

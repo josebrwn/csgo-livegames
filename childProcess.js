@@ -1,7 +1,8 @@
-var Livescore = require('./hltv-livescore');
+const tools = require('./tools');
+const Livescore = require('./hltv-livescore');
 const args = process.argv[2];
-var CircularJSON = require('circular-json');
-var timers = require('./timers');
+const CircularJSON = require('circular-json');
+const timers = require('./timers');
 
 var self = this; // 'this', the child process
 self.time = 0;
@@ -9,7 +10,6 @@ self.interval; // time remaining.
 var maxInactive = timers["MAX_INACTIVE"]; // loops
 var tick = timers["ALERT_EVERY_LOOP"]; // check every Nth loop. tick < loopEvery / 2
 var oldMessage = '';
-
 var currentGames = args.split(',').map(Number).filter(Boolean); // has to be INT array
 var finishedGames = [];
 const origGames = currentGames;
@@ -68,8 +68,8 @@ process.on('message', (msg) => {
   // compare the two arrays, when none is left of the original set, exit.
   try {
     var _arr = JSON.parse(msg);
-    finishedGames = leftDisjoin(currentGames, _arr["currentGames"]);
-    currentGames = leftDisjoin(currentGames, finishedGames);
+    finishedGames = tools.leftDisjoin(currentGames, _arr["currentGames"]);
+    currentGames = tools.leftDisjoin(currentGames, finishedGames);
   }
   catch (e) {
     console.log('childProcess exiting: error on parse message', e);
@@ -120,9 +120,3 @@ live.on('raw', function(data) {
     setInactivityTimer(maxInactive);
   }
 });
-
-// efficient ES6 function to find difference between 2 arrays
-function leftDisjoin(newArr, oldArr) {
-  var oldSet = new Set(oldArr);
-  return newArr.filter(function(x) { return !oldSet.has(x); });
-}

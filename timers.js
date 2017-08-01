@@ -1,5 +1,5 @@
 /*
- timers. LOOP_EVERY_MS > 1000 * ALERT_EVERY_LOOP * 2
+ timers. loop_every_ms > 1000 * alert_every_loop * 2
 */
 module.exports = {
     "LOOP_EVERY_MS": 180000,

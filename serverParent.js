@@ -1,5 +1,6 @@
 // 'use strict'; // PROBLEM! TODO
 
+const tools = require('./tools');
 const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
@@ -11,18 +12,10 @@ const request = require("request");
 const CircularJSON = require('circular-json');
 
 const lg = io.of('/livegames');
-
-var oldGames = []; // the previous run's currentGames
-var childArray = []; // the list_id's currently running in child processes
-var currentGamesJSON = '{ "currentGames": [] }'; // broadcast to all children
-var loopEvery = timers["LOOP_EVERY_MS"]; // ms. childProcess ticks must be less than half this value.
-var nextInterval = timers["WAIT_MS"];
-
-// PM2 env vars
-var api_url = process.env.API_URL || 'http://jsonplaceholder.typicode.com/posts';
-var port = process.env.PORT || 3001;
-
-var options = {
+const loopEvery = timers["LOOP_EVERY_MS"]; // ms. childProcess ticks must be less than half this value.
+const api_url = process.env.API_URL || 'http://jsonplaceholder.typicode.com/posts';
+const port = process.env.PORT || 3001;
+const options = {
     method: 'POST',
     url: api_url,
     headers: {
@@ -32,6 +25,10 @@ var options = {
     timeout: timers["TIMEOUT_MS"] // default is 120000
 };
 
+var oldGames = []; // the previous run's currentGames
+var childArray = []; // the list_id's currently running in child processes
+var currentGamesJSON = '{ "currentGames": [] }'; // broadcast to all children
+var nextInterval = timers["WAIT_MS"];
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -46,7 +43,7 @@ function scrapeMatchPage() {
   setTimeout(function  () {
     livegames.getLiveGames((games, err) => {
       if (err) {
-        console.log('WARNING', currentTime(), err);
+        console.log('WARNING', tools.currentTime(), err);
         return; // oldGames remains fixed
       }
       else {
@@ -60,19 +57,19 @@ function scrapeMatchPage() {
             });
           }
           catch (e) {
-            console.log('WARNING', currentTime(), e);
+            console.log('WARNING', tools.currentTime(), e);
             return; // oldGames remains fixed
           }
         }
         else {
-          console.log('WARNING', currentTime(), 'games: ', games);
+          console.log('WARNING', tools.currentTime(), 'games: ', games);
           return; // oldGames remains fixed
         }
       }
-      newGames = leftDisjoin(currentGames, oldGames);
-      finishedGames = leftDisjoin(oldGames, currentGames);
+      newGames = tools.leftDisjoin(currentGames, oldGames);
+      finishedGames = tools.leftDisjoin(oldGames, currentGames);
       currentGamesJSON = '{ "currentGames": [' + currentGames + '] }';
-      console.log(currentTime());
+      console.log(tools.currentTime());
       console.log ('current games:', currentGames);
       lg.emit('msg_to_client', currentGamesJSON);
 
@@ -84,7 +81,7 @@ function scrapeMatchPage() {
       console.log('old games:', oldGames);
       console.log('new games:', newGames);
       console.log('finished games:', finishedGames);
-      console.log('child array', childArray);
+      console.log('child array:', childArray);
       console.log('connected users:', Object.keys(io.sockets.sockets));
 
       /*
@@ -148,10 +145,10 @@ function scrapeMatchPage() {
         post livescores to the API
       */
       if (newGames.length > 0) {
-        const diff = leftDisjoin(newGames, childArray); // prevent double launch
+        const diff = tools.leftDisjoin(newGames, childArray); // prevent double launch
         if (diff.length > 0) {
           childArray = childArray.concat(diff);
-          console.log('child array', childArray);
+          console.log('child array:', childArray);
           const child = cp.fork(__dirname+'/childProcess.js', [diff]);
           // The only events you can receive from the child process are error, exit, disconnect, close, and message.
           child.on('message', function(data) {
@@ -159,11 +156,11 @@ function scrapeMatchPage() {
                 child.send(currentGamesJSON); // child requests list of current games
             }
             else if (data === 'process_exit') {
-              console.log('PROCESS EXIT', diff); // expect diff to be the const it was at launch
-              childArray = leftDisjoin(childArray, diff);
+              childArray = tools.leftDisjoin(childArray, diff);
+              console.log('child array:', childArray);
             }
             else {
-              if (IsJsonString(data)) {
+              if (tools.IsJsonString(data)) {
                 data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is also handled in csgomapslookup
                 options.body = data;
                 data = CircularJSON.parse(data); // condensed but not truncated
@@ -174,7 +171,7 @@ function scrapeMatchPage() {
                     console.log('WARNING', error);
                   }
                   else {
-                    if (body === '"OK"' || body.indexOf('"ReturnCode":-1') > 0 || !IsJsonString(body) ) { // hide misc errors from the client
+                    if (body === '"OK"' || body.indexOf('"ReturnCode":-1') > 0 || !tools.IsJsonString(body) ) { // hide misc errors from the client
                       console.log(body);
                     }
                     else {
@@ -216,26 +213,3 @@ lg.on('connection', function(socket){
     console.log( 'User ' + socket.id + ' disconnected');
   });
 });
-
-// efficient ES6 function to find difference between 2 arrays
-function leftDisjoin(newArr, oldArr) {
-  var oldSet = new Set(oldArr);
-  return newArr.filter(function(x) { return !oldSet.has(x); });
-}
-
-// the API probably expects well-formed JSON
-function IsJsonString(str) {
-    try {
-        JSON.parse(str);
-    } catch (e) {
-        return false;
-    }
-    return true;
-}
-// the current UTC date and time. NB: HLTV is on Central European Time (CET or CEDT).
-var currentTime = () => {
-  _time = new Date().toISOString().
-  replace(/T/, ' ').    // replace T with a space
-  replace(/\..+/, '');
-  return _time;
-};
