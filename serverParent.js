@@ -89,7 +89,6 @@ function scrapeMatchPage() {
       */
       if (newGames.length > 0) {
         var newGamesJSON = '{ "newGames": [' + newGames + '] }';
-
         options.body = newGamesJSON;
         lg.emit('msg_to_client', newGamesJSON);
         request(options, function(error, response, body) {
@@ -97,7 +96,10 @@ function scrapeMatchPage() {
             console.log('WARNING', error);
           }
           else {
-            if (body !== '"OK"') {
+            if (body === '"OK"' ) { // hide from client
+              console.log(body);
+            }
+            else if (body !== '"OK"' && tools.IsJsonString(body)) {
               var bodyJson = CircularJSON.parse(body);
               console.log(CircularJSON.stringify(bodyJson));
               if (bodyJson["Message"] === null) {
@@ -105,7 +107,7 @@ function scrapeMatchPage() {
               }
             }
             else {
-              console.log(body);
+              console.log('WARNING', body);
             }
           }
         });
@@ -125,7 +127,10 @@ function scrapeMatchPage() {
             console.log('WARNING', error);
           }
           else {
-            if (body !== '"OK"') {
+            if (body === '"OK"' ) { // hide from client
+              console.log(body);
+            }
+            else if (body !== '"OK"' && tools.IsJsonString(body)) {
               var bodyJson = CircularJSON.parse(body);
               console.log(CircularJSON.stringify(bodyJson));
               if (bodyJson["Message"] === null) {
@@ -133,7 +138,7 @@ function scrapeMatchPage() {
               }
             }
             else {
-              console.log(body);
+              console.log('WARNING', body);
             }
           }
         });
@@ -163,16 +168,25 @@ function scrapeMatchPage() {
               if (tools.IsJsonString(data)) {
                 data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is also handled in csgomapslookup
                 options.body = data;
-                data = CircularJSON.parse(data); // condensed but not truncated
-                console.log(CircularJSON.stringify(data));
-                lg.emit('msg_to_client', CircularJSON.stringify(data));
+                if (tools.IsJsonString(data)) {
+                  var dataJSON = CircularJSON.parse(data); // condensed but not truncated
+                  console.log(CircularJSON.stringify(dataJSON));
+                  lg.emit('msg_to_client', CircularJSON.stringify(dataJSON));
+                }
+                else {
+                  console.log('WARNING', data);
+                }
+
                 request(options, function(error, response, body) {
                   if (error) {
                     console.log('WARNING', error);
                   }
                   else {
-                    if (body === '"OK"' || body.indexOf('"ReturnCode":-1') > 0 || !tools.IsJsonString(body) ) { // hide misc errors from the client
+                    if (body === '"OK"' ) { // hide from client
                       console.log(body);
+                    }
+                    if (body.indexOf('"ReturnCode":-1') > 0 || !tools.IsJsonString(body)) {
+                      console.log('WARNING', body);
                     }
                     else {
                       var bodyJson = CircularJSON.parse(body);
