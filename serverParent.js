@@ -103,7 +103,7 @@ function scrapeMatchPage() {
               var bodyJson = CircularJSON.parse(body);
               console.log(CircularJSON.stringify(bodyJson));
               if (bodyJson["Message"] === null) {
-                lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
+                lg.emit('msg_to_client', body);
               }
             }
             else {
@@ -134,7 +134,7 @@ function scrapeMatchPage() {
               var bodyJson = CircularJSON.parse(body);
               console.log(CircularJSON.stringify(bodyJson));
               if (bodyJson["Message"] === null) {
-                lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
+                lg.emit('msg_to_client', body);
               }
             }
             else {
@@ -164,41 +164,36 @@ function scrapeMatchPage() {
               childArray = tools.leftDisjoin(childArray, diff);
               console.log('child array:', childArray);
             }
-            else {
-              if (tools.IsJsonString(data)) {
-                data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is also handled in csgomapslookup
-                options.body = data;
-                if (tools.IsJsonString(data)) {
-                  var dataJSON = CircularJSON.parse(data); // condensed but not truncated
-                  console.log(CircularJSON.stringify(dataJSON));
-                  lg.emit('msg_to_client', CircularJSON.stringify(dataJSON));
+            else if (tools.IsJsonString(data)) {
+              data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is also handled in csgomapslookup
+              options.body = data;
+              var dataJSON = CircularJSON.parse(data); // condensed but not truncated
+              console.log(CircularJSON.stringify(dataJSON));
+              lg.emit('msg_to_client', data);
+
+              // submit to API
+              request(options, function(error, response, body) {
+                if (error) {
+                  console.log('WARNING', error);
                 }
                 else {
-                  console.log('WARNING', data);
-                }
-
-                request(options, function(error, response, body) {
-                  if (error) {
-                    console.log('WARNING', error);
+                  if (body === '"OK"' ) { // hide from client
+                    console.log(body);
+                  }
+                  if (body.indexOf('"ReturnCode":-1') > 0 || !tools.IsJsonString(body)) {
+                    console.log('WARNING', body);
                   }
                   else {
-                    if (body === '"OK"' ) { // hide from client
-                      console.log(body);
-                    }
-                    if (body.indexOf('"ReturnCode":-1') > 0 || !tools.IsJsonString(body)) {
-                      console.log('WARNING', body);
-                    }
-                    else {
-                      var bodyJson = CircularJSON.parse(body);
-                      console.log(CircularJSON.stringify(bodyJson));
-                      lg.emit('msg_to_client', CircularJSON.stringify(bodyJson));
-                    }
+                    var bodyJson = CircularJSON.parse(body);
+                    console.log(CircularJSON.stringify(bodyJson));
+                    lg.emit('msg_to_client', body);
                   }
-                });
-              }
-              else {
-                console.log('INFORMATION', data);
-              }
+                }
+              });
+
+            }
+            else {
+                console.log('WARNING', data);
             }
           }); // child.on
         } // if diff
