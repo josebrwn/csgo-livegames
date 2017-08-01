@@ -68,8 +68,8 @@ process.on('message', (msg) => {
   // compare the two arrays, when none is left of the original set, exit.
   try {
     var _arr = JSON.parse(msg);
-    finishedGames = tools.leftDisjoin(currentGames, _arr["currentGames"]);
-    currentGames = tools.leftDisjoin(currentGames, finishedGames);
+    finishedGames = tools.leftDisjoin(origGames, _arr["currentGames"]);
+    currentGames = tools.leftDisjoin(origGames, finishedGames);
   }
   catch (e) {
     console.log('childProcess exiting: error on parse message', e);
