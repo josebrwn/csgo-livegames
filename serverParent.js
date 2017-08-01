@@ -170,7 +170,6 @@ function scrapeMatchPage() {
               var dataJSON = CircularJSON.parse(data); // condensed but not truncated
               console.log(CircularJSON.stringify(dataJSON));
               lg.emit('msg_to_client', data);
-
               // submit to API
               request(options, function(error, response, body) {
                 if (error) {
@@ -180,7 +179,7 @@ function scrapeMatchPage() {
                   if (body === '"OK"' ) { // hide from client
                     console.log(body);
                   }
-                  if (body.indexOf('"ReturnCode":-1') > 0 || !tools.IsJsonString(body)) {
+                  else if (body.indexOf('"ReturnCode":-1') > 0 || !tools.IsJsonString(body)) {
                     console.log('WARNING', body);
                   }
                   else {
@@ -190,12 +189,12 @@ function scrapeMatchPage() {
                   }
                 }
               });
-
             }
             else {
                 console.log('INFORMATION', data);
             }
           }); // child.on
+
         } // if diff
       } // if newGames
       oldGames = currentGames; // always reset oldGames
