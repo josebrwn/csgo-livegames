@@ -193,7 +193,7 @@ function scrapeMatchPage() {
 
             }
             else {
-                console.log('WARNING', data);
+                console.log('INFORMATION', data);
             }
           }); // child.on
         } // if diff
