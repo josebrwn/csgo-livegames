@@ -12,7 +12,6 @@ const request = require("request");
 const CircularJSON = require('circular-json');
 
 const lg = io.of('/livegames');
-const loopEvery = timers["LOOP_EVERY_MS"]; // ms. childProcess ticks must be less than half this value.
 const api_url = process.env.API_URL || 'http://jsonplaceholder.typicode.com/posts';
 const port = process.env.PORT || 3001;
 const options = {
@@ -24,11 +23,13 @@ const options = {
     },
     timeout: timers["TIMEOUT_MS"] // default is 120000
 };
+const loopEvery = timers["LOOP_EVERY_MS"]; // ms. childProcess ticks must be less than half this value.
 
+var nextInterval = timers["WAIT_MS"];
 var oldGames = []; // the previous run's currentGames
 var childArray = []; // the list_id's currently running in child processes
 var currentGamesJSON = '{ "currentGames": [] }'; // broadcast to all children
-var nextInterval = timers["WAIT_MS"];
+var gameStatusJSON='';
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -85,72 +86,25 @@ function scrapeMatchPage() {
       console.log('connected users:', Object.keys(io.sockets.sockets));
 
       /*
-        post newGames to the API
+        post changes in game status to the API
       */
+
+
       if (newGames.length > 0) {
-        var newGamesJSON = '{ "newGames": [' + newGames + '] }';
-        options.body = newGamesJSON;
-        lg.emit('msg_to_client', newGamesJSON);
-        request(options, function(error, response, body) {
-          if (error) {
-            console.log('WARNING', error);
-          }
-          else {
-            if (body === '"OK"' ) { // hide from client
-              console.log(body);
-            }
-            else if (body !== '"OK"' && tools.IsJsonString(body)) {
-              var bodyJson = CircularJSON.parse(body);
-              console.log(CircularJSON.stringify(bodyJson));
-              if (bodyJson["Message"] === null) {
-                lg.emit('msg_to_client', body);
-              }
-            }
-            else {
-              console.log('WARNING', body);
-            }
-          }
-        });
-
+        gameStatusJSON = JSON.stringify({ "newGames": newGames });
+        postStatusChange(gameStatusJSON);
       }
-
-      /*
-        post finishedGames to the API
-      */
       if (finishedGames.length > 0) {
-        var finishedGamesJSON = '{ "finishedGames": [' + finishedGames + '] }';
-
-        options.body = finishedGamesJSON;
-        lg.emit('msg_to_client', finishedGamesJSON);
-        request(options, function(error, response, body) {
-          if (error) {
-            console.log('WARNING', error);
-          }
-          else {
-            if (body === '"OK"' ) { // hide from client
-              console.log(body);
-            }
-            else if (body !== '"OK"' && tools.IsJsonString(body)) {
-              var bodyJson = CircularJSON.parse(body);
-              console.log(CircularJSON.stringify(bodyJson));
-              if (bodyJson["Message"] === null) {
-                lg.emit('msg_to_client', body);
-              }
-            }
-            else {
-              console.log('WARNING', body);
-            }
-          }
-        });
-
+        gameStatusJSON = JSON.stringify({ "finishedGames": finishedGames });
+        postStatusChange(gameStatusJSON);
       }
-
 
       /*
         post livescores to the API
       */
       if (newGames.length > 0) {
         const diff = tools.leftDisjoin(newGames, childArray); // prevent double launch
+
         if (diff.length > 0) {
           childArray = childArray.concat(diff);
           console.log('child array:', childArray);
@@ -166,37 +120,17 @@ function scrapeMatchPage() {
             }
             else if (tools.IsJsonString(data)) {
               data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is also handled in csgomapslookup
-              options.body = data;
               var dataJSON = CircularJSON.parse(data); // condensed but not truncated
               console.log(CircularJSON.stringify(dataJSON));
-              lg.emit('msg_to_client', data);
-              // submit to API
-              request(options, function(error, response, body) {
-                if (error) {
-                  console.log('WARNING', error);
-                }
-                else {
-                  if (body === '"OK"' ) { // hide from client
-                    console.log(body);
-                  }
-                  else if (body.indexOf('"ReturnCode":-1') > 0 || !tools.IsJsonString(body)) {
-                    console.log('WARNING', body);
-                  }
-                  else {
-                    var bodyJson = CircularJSON.parse(body);
-                    console.log(CircularJSON.stringify(bodyJson));
-                    lg.emit('msg_to_client', body);
-                  }
-                }
-              });
+              postStatusChange(data);
             }
             else {
-                console.log('INFORMATION', data);
+              console.log('INFORMATION', data);
             }
-          }); // child.on
+          });
+        }
+      }
 
-        } // if diff
-      } // if newGames
       oldGames = currentGames; // always reset oldGames
     }); // getLiveGames
 
@@ -212,7 +146,6 @@ function scrapeMatchPage() {
     }
   }, nextInterval); // trigger an ECONNRESET here, set very short or undefined.
 }
-
 scrapeMatchPage();
 
 lg.on('connection', function(socket){
@@ -221,3 +154,27 @@ lg.on('connection', function(socket){
     console.log( 'User ' + socket.id + ' disconnected');
   });
 });
+
+// post a status change to the API
+function postStatusChange (jsonVal) {
+  options.body = jsonVal;
+  lg.emit('msg_to_client', jsonVal);
+  request(options, function(error, response, body) {
+    if (error) {
+      console.log('WARNING', error);
+    }
+    else {
+      if (body === '"OK"' ) { // hide from client
+        console.log(body);
+      }
+      else if (body.indexOf('"ReturnCode":-1') > 0 || !tools.IsJsonString(body)) {
+        console.log('WARNING', body);
+      }
+      else {
+        var bodyJson = CircularJSON.parse(body);
+        console.log(CircularJSON.stringify(bodyJson));
+        lg.emit('msg_to_client', body);
+      }
+    }
+  });
+}
