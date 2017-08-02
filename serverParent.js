@@ -109,13 +109,16 @@ function scrapeMatchPage() {
           const child = cp.fork(__dirname+'/childProcess.js', [diff]);
           // The only events you can receive from the child process are error, exit, disconnect, close, and message.
           child.on('message', function(data) {
+            // child requests list of current games
             if (data === 'current_games') {
-                child.send(currentGamesJSON); // child requests list of current games
+                child.send(currentGamesJSON);
             }
+            // child self-destructs
             else if (data === 'process_exit') {
-              childArray = tools.leftDisjoin(childArray, diff);
+              childArray = tools.leftDisjoin(childArray, diff); // ref. to `diff` persists for the life of the child
               console.log('child array:', childArray);
             }
+            // hltv emits message
             else if (tools.IsJsonString(data)) {
               data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is also handled in csgomapslookup
               var dataJSON = CircularJSON.parse(data); // condensed but not truncated
