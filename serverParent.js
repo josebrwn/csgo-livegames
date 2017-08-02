@@ -69,7 +69,7 @@ function scrapeMatchPage() {
       }
       newGames = tools.leftDisjoin(currentGames, oldGames);
       finishedGames = tools.leftDisjoin(oldGames, currentGames);
-      currentGamesJSON = '{ "currentGames": [' + currentGames + '] }';
+      currentGamesJSON = JSON.stringify({ "currentGames": currentGames });
       console.log(tools.currentTime());
       console.log ('current games:', currentGames);
       lg.emit('msg_to_client', currentGamesJSON);
@@ -88,8 +88,6 @@ function scrapeMatchPage() {
       /*
         post changes in game status to the API
       */
-
-
       if (newGames.length > 0) {
         gameStatusJSON = JSON.stringify({ "newGames": newGames });
         postStatusChange(gameStatusJSON);

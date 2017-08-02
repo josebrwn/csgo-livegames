@@ -31,15 +31,6 @@ var setInactivityTimer = function(time) {
     self.time = self.time - 1;
     _s = Number(self.time);
     if (_s % tick === 0 && _s > -1) {
-
-      try {
-        process.send(origGames + ' inactive time remaining ' + self.time);
-      }
-      catch (e) {
-        console.log('childProcess exiting: error on time remaining', e);
-        process.exit(1);
-      }
-
       // request current games
       try {
           process.send('current_games');
@@ -49,7 +40,7 @@ var setInactivityTimer = function(time) {
         process.exit(1);
       }
     }
-
+    // report back and exit if finished
     if (_s <= 0) {
       try {
           process.send(origGames + ' exiting due to inactivity');
@@ -59,6 +50,15 @@ var setInactivityTimer = function(time) {
         process.exit(1);
       }
       process.exit(1); // child self-destructs
+    }
+    else {
+      try {
+        process.send(origGames + ' inactive time remaining ' + self.time);
+      }
+      catch (e) {
+        console.log('childProcess exiting: error on time remaining', e);
+        process.exit(1);
+      }
     }
   }, 1000); // fixed at 1 sec.
 };
