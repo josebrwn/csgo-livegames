@@ -120,10 +120,16 @@ function scrapeMatchPage() {
             }
             // hltv emits message
             else if (tools.IsJsonString(data)) {
-              data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is also handled in csgomapslookup
+              // omit junk records
               var dataJSON = CircularJSON.parse(data); // condensed but not truncated
-              console.log(CircularJSON.stringify(dataJSON));
-              postStatusChange(data);
+              if (data.toString().indexOf('"mapScores":{}')>0 && data.toString().indexOf('"wins":{}')>0) {
+                console.log('WARNING', CircularJSON.stringify(dataJSON));
+              }
+              else {
+                data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is also handled in csgomapslookup
+                console.log(CircularJSON.stringify(dataJSON));
+                postStatusChange(data);
+              }
             }
             else {
               console.log('INFORMATION', data);
