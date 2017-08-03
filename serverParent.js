@@ -121,11 +121,14 @@ function scrapeMatchPage() {
             // hltv emits message
             else if (tools.IsJsonString(data)) {
               // omit junk records
-              if (data.toString().indexOf('"mapScores":{}')===0 && data.toString().indexOf('"wins":{}')===0) {
+              if (data.toString().indexOf('"mapScores":{}')<=0 && data.toString().indexOf('"wins":{}')<=0) {
                 data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is also handled in csgomapslookup
                 var dataJSON = CircularJSON.parse(data); // condensed but not truncated
                 console.log(CircularJSON.stringify(dataJSON));
                 postStatusChange(data);
+              }
+              else {
+                console.log('INFORMATION', data);
               }
             }
             else {
