@@ -125,7 +125,7 @@ function scrapeMatchPage() {
               var _s = CircularJSON.stringify(dataJSON);
               // omit junk records
               if (_s.toString().indexOf('"mapScores":{}') > 0 ) {
-                // console.log('DEBUG', _s);
+                console.log('DEBUG', tools.currentTime());
               }
               else {
                 console.log(_s);
@@ -181,6 +181,7 @@ function postStatusChange (jsonVal) {
       else {
         var bodyJson = CircularJSON.parse(body);
         console.log(CircularJSON.stringify(bodyJson));
+        body = body.replace(',', ', ');
         lg.emit('msg_to_client', body);
       }
     }
