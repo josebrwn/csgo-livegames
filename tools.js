@@ -50,7 +50,7 @@ module.exports = {
     console.log(tweet.substring(0,139));
     try {
       T.post('statuses/update', { status: tweet }, function(err, data, response) {
-        console.log(data);
+        // console.log(data);
       });
     }
     catch (e) {
