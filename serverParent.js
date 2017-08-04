@@ -191,6 +191,9 @@ function postStatusChange (jsonVal) {
         if (process.env.NODE_ENV === 'staging') {
           tools.sendTweet(body);
         }
+        else {
+          console.log (process.env.NODE_ENV);
+        }
       }
     }
   });

@@ -9,5 +9,5 @@ module.exports = {
   consumer_secret: '***REMOVED***',
   access_token: '893460385809874944-XmrUzgSyVj5rKnExrvzHZu5O1e8MONn',
   access_token_secret: 'YdTXt9GnGJR3ygqQjmPDXKJlryBLh0nAIxlCgVfUuK1Dl',
-  timeout_ms: 20000
+  timeout_ms: 30000
 }
