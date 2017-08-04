@@ -188,25 +188,10 @@ function postStatusChange (jsonVal) {
         console.log(CircularJSON.stringify(bodyJson));
         body = body.replace(/,/g, ', ');
         lg.emit('msg_to_client', body);
-        if (process.env.NODE_ENV === 'production') {
+        if (process.env.NODE_ENV === 'staging') {
           tools.sendTweet(body);
         }
       }
     }
   });
-}
-
-function postToTwitter (msg) {
-  const T = new twit(config);
-
-  var tweet = '';
-  /*
-  need to parse the good bits
-  list_id, team1_id, team2_id, odds t1, odds ....?
-  */
-
-  T.post('statuses/update', { status: tweet }, function(err, data, response) {
-  console.log(CircularJSON.stringify(data)["text"]);
-  });
-
 }

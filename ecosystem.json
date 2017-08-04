@@ -17,7 +17,7 @@
       },
       "env_staging": {
         "PORT": 3001,
-        "NODE_ENV": "production",
+        "NODE_ENV": "staging",
         "API_URL": "***REMOVED***"
       },
       "env_production": {
