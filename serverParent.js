@@ -123,13 +123,14 @@ function scrapeMatchPage() {
               data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is also handled in csgomapslookup
               var dataJSON = CircularJSON.parse(data); // condensed but not truncated
               var _s = CircularJSON.stringify(dataJSON);
+              // omit junk records
               if (_s.toString().indexOf('"mapScores":{}') > 0 ) {
-                console.log('DEBUG', _s); // omit junk records
+                // console.log('DEBUG', _s);
               }
               else {
                 console.log(_s);
                 postStatusChange(data);
-              } 
+              }
             }
             else {
               console.log('INFORMATION', data);
