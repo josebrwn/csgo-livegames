@@ -11,6 +11,7 @@ tweet = tweet + '\nt2 ' + msg["team2_id"];
 tweet = tweet + '\nt1wpl ' + msg["team1_win_percentage_live"];
 tweet = tweet + '\nt2wpl ' + msg["team2_win_percentage_live"];
 tweet = tweet + '\nm ' + msg["match_number"];
+tweet = tweet + '\nm ' + msg["map_name"];
 tweet = tweet + '\ns1 ' + msg["team1_score"];
 tweet = tweet + '\ns2 ' + msg["team2_score"];
 tweet = tweet + '\nt1s ' + msg["team1_side"];
@@ -18,7 +19,12 @@ tweet = tweet + '\nt2s ' + msg["team2_side"];
 tweet = tweet + '\nt1w ' + msg["team1_wins"];
 tweet = tweet + '\nt2w ' + msg["team2_wins"];
 tweet = tweet + '\nt1wol ' + msg["team1_winodds_live"];
-//console.log(tweet.substring(1,140));
-T.post('statuses/update', { status: tweet }, function(err, data, response) {
-  console.log(CircularJSON.stringify(data)["text"]);
-});
+console.log(tweet.substring(0,139));
+try {
+  T.post('statuses/update', { status: tweet }, function(err, data, response) {
+    console.log(data);
+  });
+}
+catch (e) {
+  console.log(e);
+}
