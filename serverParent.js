@@ -1,17 +1,21 @@
 // 'use strict'; // PROBLEM! TODO
 
-const tools = require('./tools');
 const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
-const timers = require('./timers');
-const livegames = require('./hltv-live-games');
-const Livescore = require('./hltv-livescore');
 const cp = require('child_process');
 const request = require("request");
 const CircularJSON = require('circular-json');
+const twit = require('twit');
+
+const livegames = require('./hltv-live-games');
+const Livescore = require('./hltv-livescore');
+const timers = require('./timers');
+const tools = require('./tools');
+const config = require('./config.js');
 
 const lg = io.of('/livegames');
+
 const api_url = process.env.API_URL || 'http://jsonplaceholder.typicode.com/posts';
 const port = process.env.PORT || 3001;
 const options = {
@@ -109,6 +113,7 @@ function scrapeMatchPage() {
           const child = cp.fork(__dirname+'/childProcess.js', [diff]);
           // The only events you can receive from the child process are error, exit, disconnect, close, and message.
           child.on('message', function(data) {
+
             // child requests list of current games
             if (data === 'current_games') {
                 child.send(currentGamesJSON);
@@ -183,7 +188,25 @@ function postStatusChange (jsonVal) {
         console.log(CircularJSON.stringify(bodyJson));
         body = body.replace(/,/g, ', ');
         lg.emit('msg_to_client', body);
+        if (process.env.NODE_ENV === 'staging') {
+          tools.sendTweet(body);
+        }
       }
     }
   });
+}
+
+function postToTwitter (msg) {
+  const T = new twit(config);
+
+  var tweet = '';
+  /*
+  need to parse the good bits
+  list_id, team1_id, team2_id, odds t1, odds ....?
+  */
+
+  T.post('statuses/update', { status: tweet }, function(err, data, response) {
+    console.log(data);
+  });
+
 }
