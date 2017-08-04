@@ -48,7 +48,7 @@ module.exports = {
     tweet = tweet + '\nt1wol ' + msg["team1_winodds_live"];
     // console.log(tweet.substring(1,140));
     T.post('statuses/update', { status: tweet.substring(1,140) }, function(err, data, response) {
-      console.log(data);
+      console.log(CircularJSON.stringify(data)["text"]);
     });
   }
 
