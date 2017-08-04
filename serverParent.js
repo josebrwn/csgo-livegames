@@ -181,7 +181,7 @@ function postStatusChange (jsonVal) {
       else {
         var bodyJson = CircularJSON.parse(body);
         console.log(CircularJSON.stringify(bodyJson));
-        body = body.replace(',', ', ');
+        body = body.replace(/,/g, ', ');
         lg.emit('msg_to_client', body);
       }
     }
