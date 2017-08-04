@@ -206,7 +206,7 @@ function postToTwitter (msg) {
   */
 
   T.post('statuses/update', { status: tweet }, function(err, data, response) {
-    console.log(data);
+  console.log(CircularJSON.stringify(data)["text"]);
   });
 
 }
