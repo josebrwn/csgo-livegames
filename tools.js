@@ -52,7 +52,12 @@ module.exports = {
     // console.log(tweet.substring(0,139));
     try {
       T.post('statuses/update', { status: tweet }, function(err, data, response) {
-        console.log(data);
+        if (data.length < 50) {
+          console.log(data);
+        }
+        else {
+          console.log("OK");
+        }
       });
     }
     catch (e) {
