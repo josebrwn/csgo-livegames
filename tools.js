@@ -36,8 +36,8 @@ module.exports = {
     var tweet = '' + msg["hltv_game_id"];
     tweet = tweet + '\nt1 ' + msg["team1_id"];
     tweet = tweet + '\nt2 ' + msg["team2_id"];
-    tweet = tweet + '\nt1wpl ' + msg["team1_win_percentage_live"];
-    tweet = tweet + '\nt2wpl ' + msg["team2_win_percentage_live"];
+    tweet = tweet + '\nt1wpl ' + parseFloat(msg["team1_win_percentage_live"]).toFixed(4);
+    tweet = tweet + '\nt2wpl ' + parseFloat(msg["team2_win_percentage_live"]).toFixed(4);
     tweet = tweet + '\nm ' + msg["match_number"];
     tweet = tweet + '\nm ' + msg["map_name"];
     tweet = tweet + '\nbo ' + msg["bestof"];
@@ -47,7 +47,8 @@ module.exports = {
     tweet = tweet + '\nt2s ' + msg["team2_side"];
     tweet = tweet + '\nt1w ' + msg["team1_wins"];
     tweet = tweet + '\nt2w ' + msg["team2_wins"];
-    tweet = tweet + '\nt1wol ' + msg["team1_winodds_live"];
+    tweet = tweet + '\nt1wol ' + parseFloat(msg["team1_winodds_live"]).toFixed(4);
+    tweet = tweet.substring(0,139);
     // console.log(tweet.substring(0,139));
     try {
       T.post('statuses/update', { status: tweet }, function(err, data, response) {
