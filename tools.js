@@ -52,8 +52,8 @@ module.exports = {
     // console.log(tweet.substring(0,139));
     try {
       T.post('statuses/update', { status: tweet }, function(err, data, response) {
-        if (data.length < 50) {
-          console.log(data);
+        if (data.indexOf('errors')>0) {
+          console.log(data); // probably an error
         }
         else {
           console.log("OK");
