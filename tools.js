@@ -29,7 +29,6 @@ module.exports = {
   sendTweet: (msg) => {
     const twit = require('twit');
     const config = require('./config_twit.js');
-    const CircularJSON = require('circular-json');
 
     var T = new twit(config);
     var msg = JSON.parse(msg);
