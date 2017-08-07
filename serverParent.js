@@ -6,13 +6,11 @@ const io = require('socket.io')(http);
 const cp = require('child_process');
 const request = require("request");
 const CircularJSON = require('circular-json');
-const twit = require('twit');
 
 const livegames = require('./hltv-live-games');
 const Livescore = require('./hltv-livescore');
 const timers = require('./timers');
 const tools = require('./tools');
-const config = require('./config.js');
 
 const lg = io.of('/livegames');
 
