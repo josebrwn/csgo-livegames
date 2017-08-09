@@ -2,10 +2,10 @@ var io = require('socket.io-client');
 var patch = require('socketio-wildcard')(io.Manager);
 var EE = require('events').EventEmitter;
 var inherits = require('util').inherits;
-// var CONNECTION = 'http://scorebot2.hltv.org';
-// var PORT = 10022;
-var CONNECTION = 'https://scorebot-secure.hltv.org';
-var PORT = 443;  // 53132 // , {secure: true}
+var CONNECTION = 'http://scorebot2.hltv.org';
+var PORT = 10022;
+// var CONNECTION = 'https://scorebot-secure.hltv.org';
+// var PORT = 443;  // 53132 // , {secure: true}
 var self;
 
 function Livescore(options) {
