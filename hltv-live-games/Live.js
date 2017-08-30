@@ -4,7 +4,7 @@ var cheerio = require("cheerio");
 var url = 'https://www.hltv.org/matches'; //  hltv must include https and www
 
 module.exports.getLiveGames = (callback) => {
-  request({ uri: url, timeout: 10000 }, (err, response, body) => {
+  request({ uri: url, timeout: 1500 }, (err, response, body) => { // https://github.com/request/request
     if (err) {
       /*
         { [Error: socket hang up] code: 'ECONNRESET' }
