@@ -14,14 +14,17 @@ const tools = require('./tools');
 
 const lg = io.of('/livegames');
 
+// note the API-KEY separator is different!
 const api_url = process.env.API_URL || 'http://jsonplaceholder.typicode.com/posts';
+const api_key = process.env.API_KEY || '***REMOVED***';
 const port = process.env.PORT || 3001;
 const options = {
     method: 'POST',
     url: api_url,
     headers: {
         'cache-control': 'no-cache',
-        'content-type': 'application/json'
+        'content-type': 'application/json',
+        'API-KEY': api_key
     },
     timeout: timers["TIMEOUT_MS"] // default is 120000
 };
