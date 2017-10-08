@@ -32,6 +32,7 @@ module.exports = {
 
     var T = new twit(config);
     var msg = JSON.parse(msg);
+    var tweet = '';
     if (parseFloat(msg["team1_win_percentage_live"]).toFixed(4) > parseFloat(msg["team2_win_percentage_live"]).toFixed(4))
     {
       tweet = tweet + msg["team1_id"] + " are favored at " + parseFloat(msg["team1_win_percentage_live"]).toFixed(4);
