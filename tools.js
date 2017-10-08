@@ -35,17 +35,23 @@ module.exports = {
     var tweet = '';
     if (parseFloat(msg["team1_win_percentage_live"]).toFixed(4) > parseFloat(msg["team2_win_percentage_live"]).toFixed(4))
     {
-      tweet = tweet + msg["team1_id"] + " are favored at " + parseFloat(msg["team1_win_percentage_live"]).toFixed(4);
+      tweet = tweet + msg["team1_id"] + " are a  " + parseFloat(msg["team1_win_percentage_live"]).toFixed(4)*10 + "% favorite ";
       tweet = tweet + " over " +  msg["team2_id"] ;
     }
     else
     {
-      tweet = tweet + msg["team2_id"] + " are favored at  " + parseFloat(msg["team2_win_percentage_live"]).toFixed(4);
+      tweet = tweet + msg["team2_id"] + " are a  " + parseFloat(msg["team1_win_percentage_live"]).toFixed(4)*10 + "% favorite ";
       tweet = tweet + " over " +  msg["team1_id"] ;
     }
-    tweet = tweet + ', score ' + msg["team1_wins"];
-    tweet = tweet + ' to ' + msg["team2_wins"];
-    tweet = tweet + '. http://***REMOVED***.com';
+    if (msg["team1_wins"] = "null" || msg["team2_wins"] == null) {
+      tweet = tweet + ', score 0 to 0';      
+    }
+    else {
+      tweet = tweet + ', score ' + msg["team1_wins"];
+      tweet = tweet + ' to ' + msg["team2_wins"];
+    }
+
+    tweet = tweet + '. http://***REMOVED***.com/matchups/' + msg["game_id"];
 
     tweet = tweet.substring(0,139);
 
