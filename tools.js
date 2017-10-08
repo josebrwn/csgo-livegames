@@ -44,14 +44,14 @@ module.exports = {
       tweet = tweet + " over " +  msg["team1_id"] ;
     }
     if (msg["team1_wins"] = "null" || msg["team2_wins"] == null) {
-      tweet = tweet + ', score 0 to 0';      
+      tweet = tweet + ', score 0 to 0';
     }
     else {
       tweet = tweet + ', score ' + msg["team1_wins"];
       tweet = tweet + ' to ' + msg["team2_wins"];
     }
 
-    tweet = tweet + '. http://***REMOVED***.com/matchups/' + msg["game_id"];
+    tweet = tweet + '. http://***REMOVED***.com/matchups/' + msg["csgogame_id"];
 
     tweet = tweet.substring(0,139);
 
