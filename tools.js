@@ -32,21 +32,20 @@ module.exports = {
 
     var T = new twit(config);
     var msg = JSON.parse(msg);
-    var tweet = '' + msg["hltv_game_id"];
-    tweet = tweet + '\nt1 ' + msg["team1_id"];
-    tweet = tweet + '\nt2 ' + msg["team2_id"];
-    tweet = tweet + '\nt1wp ' + parseFloat(msg["team1_win_percentage"]).toFixed(4);
-    tweet = tweet + '\nt2wp ' + parseFloat(msg["team2_win_percentage"]).toFixed(4);
-    tweet = tweet + '\nr ' + msg["match_number"];
-    tweet = tweet + '\nm ' + msg["map_name"];
-    tweet = tweet + '\nbo ' + msg["bestof"];
-    tweet = tweet + '\nt1wol ' + parseFloat(msg["team1_winodds_live"]).toFixed(4);
-    tweet = tweet + '\ns1 ' + msg["team1_score"];
-    tweet = tweet + '\ns2 ' + msg["team2_score"];
-    tweet = tweet + '\nt1wpl ' + parseFloat(msg["team1_win_percentage_live"]).toFixed(4);
-    tweet = tweet + '\nt2wpl ' + parseFloat(msg["team2_win_percentage_live"]).toFixed(4);
-    tweet = tweet + '\nt1w ' + msg["team1_wins"];
-    tweet = tweet + '\nt2w ' + msg["team2_wins"];
+    if (parseFloat(msg["team1_win_percentage_live"]).toFixed(4) > parseFloat(msg["team2_win_percentage_live"]).toFixed(4))
+    {
+      tweet = tweet + msg["team1_id"] + " are favored at " + parseFloat(msg["team1_win_percentage_live"]).toFixed(4);
+      tweet = tweet + " over " +  msg["team2_id"] ;
+    }
+    else
+    {
+      tweet = tweet + msg["team2_id"] + " are favored at  " + parseFloat(msg["team2_win_percentage_live"]).toFixed(4);
+      tweet = tweet + " over " +  msg["team1_id"] ;
+    }
+    tweet = tweet + ', score ' + msg["team1_wins"];
+    tweet = tweet + ' to ' + msg["team2_wins"];
+    tweet = tweet + '. http://***REMOVED***.com';
+
     tweet = tweet.substring(0,139);
 
     try {
