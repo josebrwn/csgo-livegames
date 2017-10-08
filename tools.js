@@ -35,12 +35,12 @@ module.exports = {
     var tweet = '';
     if (parseFloat(msg["team1_win_percentage_live"]).toFixed(4) > parseFloat(msg["team2_win_percentage_live"]).toFixed(4))
     {
-      tweet = tweet + msg["team1_id"] + " are a  " + parseFloat(msg["team1_win_percentage_live"]).toFixed(4)*10 + "% favorite ";
+      tweet = tweet + msg["team1_id"] + " are a  " + parseFloat(msg["team1_win_percentage_live"]).toFixed(4)*100 + "% favorite ";
       tweet = tweet + " over " +  msg["team2_id"] ;
     }
     else
     {
-      tweet = tweet + msg["team2_id"] + " are a  " + parseFloat(msg["team1_win_percentage_live"]).toFixed(4)*10 + "% favorite ";
+      tweet = tweet + msg["team2_id"] + " are a  " + parseFloat(msg["team2_win_percentage_live"]).toFixed(4)*100 + "% favorite ";
       tweet = tweet + " over " +  msg["team1_id"] ;
     }
     if (msg["team1_wins"] = "null" || msg["team2_wins"] == null) {
