@@ -35,17 +35,20 @@ module.exports = {
     var tweet = '';
     if (parseFloat(msg["team1_win_percentage_live"]).toFixed(4) > parseFloat(msg["team2_win_percentage_live"]).toFixed(4))
     {
-      tweet = tweet + msg["team1_id"] + " are a  " + parseFloat((msg["team1_win_percentage_live"])*100).toFixed(2) + "% favorite";
-      tweet = tweet + " over " +  msg["team2_id"] ;
+      tweet = tweet + msg["team1_name"] + " are a  " + parseFloat((msg["team1_win_percentage_live"])*100).toFixed(2) + "% favorite";
+      tweet = tweet + " over " +  msg["team2_name"] ;
+      tweet = tweet + ', score ' + msg["team1_score"] +" to "+ msg["team2_score"] ;
     }
     else
     {
-      tweet = tweet + msg["team2_id"] + " are a  " + parseFloat((msg["team2_win_percentage_live"])*100).toFixed(2) + "% favorite";
-      tweet = tweet + " over " +  msg["team1_id"] ;
+      tweet = tweet + msg["team2_name"] + " are a  " + parseFloat((msg["team2_win_percentage_live"])*100).toFixed(2) + "% favorite";
+      tweet = tweet + " over " +  msg["team1_name"] ;
+      tweet = tweet + ', score ' + msg["team2_score"] +" to "+ msg["team1_score"] ;
     }
-    tweet = tweet + ', score ' + msg["team1_score"] +" to "+ msg["team2_score"] + ", in match " +  msg["match_number"] + " of " +  msg["bestof"]  ;
+    tweet = tweet + ", in match " +  msg["match_number"] + " of " +  msg["bestof"]  ;
+    // tweet = tweet + '. http://***REMOVED***.com/matchups/' + msg["csgogame_id"];
+    tweet = tweet + '. http://***REMOVED***.com';
 
-    tweet = tweet + '. http://***REMOVED***.com/matchups/' + msg["csgogame_id"];
 
     tweet = tweet.substring(0,139);
 

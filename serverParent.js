@@ -189,7 +189,7 @@ function postStatusChange (jsonVal) {
         console.log(CircularJSON.stringify(bodyJson));
         body = body.replace(/,/g, ', ');
         lg.emit('msg_to_client', body);
-        if (process.env.NODE_ENV === 'production') {
+        if (process.env.NODE_ENV === 'staging') {
           tools.sendTweet(body);
         }
         else {
