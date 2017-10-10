@@ -15,7 +15,7 @@ if (process.env.NODE_ENV === 'staging') {
     timeout_ms: 30000
   }
 }
-else if (process.env.NODE_ENV === 'production') {
+else { // if (process.env.NODE_ENV === 'production') {
   module.exports = {
     consumer_key: '***REMOVED***',
     consumer_secret: '***REMOVED***',
