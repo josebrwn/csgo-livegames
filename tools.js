@@ -33,8 +33,9 @@ module.exports = {
 
     var T = new twit(config);
     var msg = JSON.parse(msg);
-    var tweet = '';
+
     if (process.env.NODE_ENV === 'staging') {
+      var tweet = '';
       if (parseFloat(msg["team1_win_percentage_live"]).toFixed(4) > parseFloat(msg["team2_win_percentage_live"]).toFixed(4))
       {
         tweet = tweet + msg["team1_name"] + " are a  " + parseFloat((msg["team1_win_percentage_live"])*100).toFixed(2) + "% favorite";
@@ -51,6 +52,7 @@ module.exports = {
       tweet = tweet + '. http://***REMOVED***.com/matchups/' + msg["csgogame_id"];
     }
     if (process.env.NODE_ENV === 'production') {
+      var tweet = '';
       tweet = tweet + '\nt1 ' + msg["team1_id"];
       tweet = tweet + '\nt2 ' + msg["team2_id"];
       tweet = tweet + '\nt1wp ' + parseFloat(msg["team1_win_percentage"]).toFixed(4);
