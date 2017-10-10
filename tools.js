@@ -28,6 +28,7 @@ module.exports = {
 
   sendTweet: (msg) => {
     const twit = require('twit');
+    // staging will send from nxt335_lg_01, production from nxt335_lg_02
     const config = require('./config_twit.js');
 
     var T = new twit(config);
@@ -41,9 +42,9 @@ module.exports = {
     }
     else
     {
-      tweet = tweet + msg["team2_name"] + " are a  " + parseFloat((msg["team2_win_percentage_live"])*100).toFixed(2) + "% favorite";
+      tweet = tweet + msg["team2_name"] + " are a " + parseFloat((msg["team2_win_percentage_live"])*100).toFixed(2) + "% favorite";
       tweet = tweet + " over " +  msg["team1_name"] ;
-      tweet = tweet + ', score ' + msg["team2_score"] +" to "+ msg["team1_score"] ;
+      tweet = tweet + ', score ' + msg["team2_score"] + " to  " + msg["team1_score"] ;
     }
     tweet = tweet + ", in match " +  msg["match_number"] + " of " +  msg["bestof"]  ;
     // tweet = tweet + '. http://***REMOVED***.com/matchups/' + msg["csgogame_id"];
