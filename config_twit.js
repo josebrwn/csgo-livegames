@@ -6,7 +6,7 @@
   Owner ntake_odds
   Owner ID 917869675429556225
 */
-if (process.env.NODE_ENV === 'staging') {
+if (process.env.NODE_ENV === 'production') {
   module.exports = {
     consumer_key: '***REMOVED***',
     consumer_secret: '***REMOVED***',
@@ -15,7 +15,7 @@ if (process.env.NODE_ENV === 'staging') {
     timeout_ms: 30000
   }
 }
-else { // if (process.env.NODE_ENV === 'production') {
+else { // other environments tweet to stage, first one wins
   module.exports = {
     consumer_key: '***REMOVED***',
     consumer_secret: '***REMOVED***',
