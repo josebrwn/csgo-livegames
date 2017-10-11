@@ -60,10 +60,15 @@ module.exports = {
     {
       tweet = tweet + t2 + " are a " + parseFloat((msg["team2_win_percentage_live"])*100).toFixed(2) + "% favorite";
       tweet = tweet + " over " +  t1 ;
-      tweet = tweet + ', score ' + msg["team2_score"] + " to  " + msg["team1_score"] ;
+      tweet = tweet + ', score ' + msg["team2_score"] + " to " + msg["team1_score"] ;
     }
     tweet = tweet + ", in match " +  msg["match_number"] + " of " +  msg["bestof"]  ;
-    tweet = tweet + '. http://***REMOVED***.com/matchups/' + msg["csgogame_id"];
+    if (process.env.NODE_ENV === 'production') {
+      tweet = tweet + '. http://***REMOVED***.com/matchups/' + msg["csgogame_id"];
+    }
+    else {
+      tweet = tweet + '. http://***REMOVED***.staging.wpengine.com/matchups/' + msg["csgogame_id"];
+    }
     tweet = tweet.substring(0,139);
     try {
       T.post('statuses/update', { status: tweet }, function(err, data, response) {

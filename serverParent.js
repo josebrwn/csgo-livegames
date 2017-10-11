@@ -14,7 +14,7 @@ const tools = require('./tools');
 
 const lg = io.of('/livegames');
 
-// note the API-KEY separator is different!
+// note the server expects "API-KEY" - separator is different!
 const api_url = process.env.API_URL || 'http://jsonplaceholder.typicode.com/posts';
 const api_key = process.env.API_KEY || '***REMOVED***';
 const port = process.env.PORT || 3001;
