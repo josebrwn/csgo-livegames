@@ -27,6 +27,8 @@ module.exports = {
   },
 
   sendTweet: (msg) => {
+    const CircularJSON = require('circular-json');
+
     const twit = require('twit');
     // staging will send from nxt335_lg_01, production from nxt335_lg_02
     const config = require('./config_twit.js');
@@ -35,8 +37,14 @@ module.exports = {
     var send = false;
 
     // decide whether to send tweet
+    if (msg["team2_name"] === undefined) {
+      console.log('WARNING', 'cannot parse  tweet');
+      return;
+    }
+
     if (msg["team1_score"] == 1 || msg["team2_score"] == 1) { send = true;}
     if (Math.abs(msg["team1_score"] - msg["team2_score"]) > 1) { send = true;}
+
     if ( msg["team1_win_percentage_live"].toFixed(3) > 0.98 || msg["team2_win_percentage_live"].toFixed(3) > 0.98 ) { send = false;}
     console.log('send tweet', send);
     if (!send) {return;}
