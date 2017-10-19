@@ -37,11 +37,10 @@ module.exports = {
     var send = false;
 
     // decide whether to send tweet
-    if (msg["team2_name"] === undefined) {
-      console.log('WARNING', 'cannot parse  tweet');
+    if (msg["team1_win_percentage_live"] === undefined) {
+      console.log('WARNING', 'cannot parse tweet');
       return;
     }
-
     if (msg["team1_score"] == 1 || msg["team2_score"] == 1) { send = true;}
     if (Math.abs(msg["team1_score"] - msg["team2_score"]) > 1) { send = true;}
 
