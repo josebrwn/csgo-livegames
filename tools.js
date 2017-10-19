@@ -36,7 +36,7 @@ module.exports = {
 
     // decide whether to send tweet
     if (msg["team1_score"] == 1 || msg["team2_score"] == 1) { send = true;}
-    if (Math.abs(msg["team1_score"] - msg["team2_score"] > 1)) { send = true;}
+    if (Math.abs(msg["team1_score"] - msg["team2_score"]) > 1) { send = true;}
     if ( msg["team1_win_percentage_live"].toFixed(3) > 0.98 || msg["team2_win_percentage_live"].toFixed(3) > 0.98 ) { send = false;}
     console.log('send tweet', send);
     if (!send) {return;}
