@@ -3,7 +3,7 @@ const config = require('./config_twit.js');
 const CircularJSON = require('circular-json');
 
   var T = new twit(config);
-  var msg = '{"id":1234,"csgogame_id":1234,"team1_id":1234,"team2_id":1234,"hltv_game_id":1234,"match_finished":false,"bestof":1,"team1_win_percentage":0.488,"team1_win_percentage_live":0.99,"team2_win_percentage":0.50,"team2_win_percentage_live":0.439748,"match_status":1,"match_number":1,"map_name":"overpass","team1_score":1,"team2_score":2,"team1_oddsct":0.502,"team1_oddst":0.493,"team1_winodds":0.488,"team1_side":"T","team2_side":"CT","team1_wins":null,"team2_wins":null,"team1_winodds_live":0.560252}';
+  var msg = '{"id":1234,"csgogame_id":1234,"team1_id":1234,"team2_id":1234,"hltv_game_id":1234,"match_finished":false,"bestof":1,"team1_win_percentage":0.488,"team1_win_percentage_live":0.50,"team2_win_percentage":0.50,"team2_win_percentage_live":0.439748,"match_status":1,"match_number":1,"map_name":"overpass","team1_score":1,"team2_score":2,"team1_oddsct":0.502,"team1_oddst":0.493,"team1_winodds":0.488,"team1_side":"T","team2_side":"CT","team1_wins":null,"team2_wins":null,"team1_winodds_live":0.560252}';
   var msg = JSON.parse(msg);
   /*
   var tweet = '' + msg["hltv_game_id"];
@@ -27,7 +27,7 @@ const CircularJSON = require('circular-json');
 
     // decide whether to send tweet
     if (msg["team1_score"] == 1 || msg["team2_score"] == 1) { send = true;}
-    if (Math.abs(msg["team1_score"] - msg["team2_score"] > "1")) { send = true;}
+    if (Math.abs(msg["team1_score"] - msg["team2_score"]) > 1) { send = true;}
     if ( msg["team1_win_percentage_live"].toFixed(3) > 0.98 || msg["team2_win_percentage_live"].toFixed(3) > 0.98 ) { send = false;}
     console.log('send tweet', send);
     if (!send) {return;}
