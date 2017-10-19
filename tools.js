@@ -32,6 +32,14 @@ module.exports = {
     const config = require('./config_twit.js');
     var T = new twit(config);
     var msg = JSON.parse(msg);
+    var send = false;
+
+    // decide whether to send tweet
+    if (msg["team1_score"] == 1 || msg["team2_score"] == 1) { send = true;}
+    if (Math.abs(msg["team1_score"] - msg["team2_score"] > 1)) { send = true;}
+    if ( msg["team1_win_percentage_live"].toFixed(3) > 0.98 || msg["team2_win_percentage_live"].toFixed(3) > 0.98 ) { send = false;}
+    console.log('send tweet', send);
+    if (!send) {return;}
 
     // HACK remove this when the model is updated
     var t1;
@@ -72,7 +80,9 @@ module.exports = {
     tweet = tweet.substring(0,139);
     try {
       T.post('statuses/update', { status: tweet }, function(err, data, response) {
-        if (data.toString().indexOf('errors:')>0) {
+        reply = CircularJSON.stringify(data);
+
+        if (reply.indexOf('"errors":')>0) {
           console.log(data); // probably an error
         }
         else {
