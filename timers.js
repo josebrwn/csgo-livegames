@@ -10,5 +10,6 @@ module.exports = {
     "TIMEOUT_MS": 30000,
     "MAX_INACTIVE": 7200,
     "ALERT_EVERY_LOOP": 60,
-    "WAIT_MS": 2000
+    "WAIT_MS": 2000,
+    "TWEET_SEC": 36 // 2400 per day
 };

@@ -41,7 +41,7 @@ Livescore.prototype._onConnect = function() {
 
   if (self.gamesList) {
     self.socket.emit('readyForScores', self.gamesList);
-    // self.emit('debug', self.gamesList);
+    self.emit('raw', self.gamesList);
   }
 };
 
