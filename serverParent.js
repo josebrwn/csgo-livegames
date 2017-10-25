@@ -196,8 +196,9 @@ function postStatusChange (jsonVal) {
         }
         else {
           console.log('ok to tweet', self.time);
-          tools.sendTweet(body); // now sending in staging and production
-          setTwitterTimer(timers["TWEET_SEC"]);
+          if (tools.sendTweet(body)) {
+            setTwitterTimer(timers["TWEET_SEC"]);
+          };
         }
       }
     }
