@@ -35,7 +35,9 @@ var oldGames = []; // the previous run's currentGames
 var childArray = []; // the list_id's currently running in child processes
 var currentGamesJSON = '{ "currentGames": [] }'; // broadcast to all children
 var gameStatusJSON='';
-
+var self = this; // 'this', the process
+self.time = 0;
+self.interval; // time remaining.
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
@@ -189,8 +191,26 @@ function postStatusChange (jsonVal) {
         console.log(CircularJSON.stringify(bodyJson));
         body = body.replace(/,/g, ', ');
         lg.emit('msg_to_client', body);
-        tools.sendTweet(body); // now sending in staging and production
+        if (self.time > 0) {
+          console.log('too soon to tweet', self.time);
+        }
+        else {
+          console.log('ok to tweet', self.time);
+          tools.sendTweet(body); // now sending in staging and production
+          setTwitterTimer(timers["TWEET_SEC"]);
+        }
       }
     }
   });
 }
+
+var setTwitterTimer = function(time) {
+  clearInterval(self.interval);
+  self.time = time;
+  // "Infinite Loop" Execution ~ setInterval().
+  self.interval = setInterval(() => {
+    var _s;
+    self.time = self.time - 1;
+    _s = Number(self.time);
+  }, 1000); // fixed at 1 sec.
+};

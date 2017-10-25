@@ -5,6 +5,9 @@
 */
 module.exports = {
 
+
+
+
   currentTime: () => {
     _time = new Date().toISOString().
     replace(/T/, ' ').    // replace T with a space
@@ -27,6 +30,8 @@ module.exports = {
   },
 
   sendTweet: (msg) => {
+
+
     const CircularJSON = require('circular-json');
 
     const twit = require('twit');
@@ -37,6 +42,8 @@ module.exports = {
     var send = false;
 
     // decide whether to send tweet
+
+
     if (msg["team1_win_percentage_live"] === undefined) {
       console.log('WARNING', 'cannot parse tweet');
       return;
