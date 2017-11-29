@@ -81,8 +81,6 @@ module.exports = {
       tweet = tweet + '. http://***REMOVED***.staging.wpengine.com/csgomatchups/' + msg["csgogame_id"];
     }
     tweet = tweet.substring(0,139);
-    console.log(tweet);
-    return;
     try {
       T.post('statuses/update', { status: tweet }, function(err, data, response) {
         reply = CircularJSON.stringify(data);
