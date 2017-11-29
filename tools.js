@@ -63,7 +63,7 @@ module.exports = {
     var tweet = '';
     if (parseFloat(msg["team1_win_percentage_live"]).toFixed(4) > parseFloat(msg["team2_win_percentage_live"]).toFixed(4))
     {
-      tweet = tweet + t1 + " are a  " + parseFloat((msg["team1_win_percentage_live"])*100).toFixed(2) + "% favorite";
+      tweet = tweet + t1 + " are a " + parseFloat((msg["team1_win_percentage_live"])*100).toFixed(2) + "% favorite";
       tweet = tweet + " over " +  t2 ;
       tweet = tweet + ', score ' + msg["team1_score"] +" to "+ msg["team2_score"] ;
     }
