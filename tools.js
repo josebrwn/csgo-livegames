@@ -56,20 +56,9 @@ module.exports = {
     if (!send) {return;}
 
     // HACK remove this when the model is updated
-    var t1;
-    var t2;
-    if (msg["team1_name"] === undefined) {
-      t1 = msg["team1_id"];
-    }
-    else {
-      t1 = msg["team1_name"];
-    }
-    if (msg["team2_name"] === undefined) {
-      t2 = msg["team2_id"];
-    }
-    else {
-      t2 = msg["team2_name"];
-    }
+    var t1 = unescape(msg["team1_name"]);
+    var t2 = unescape(msg["team2_name"]);
+
 
     var tweet = '';
     if (parseFloat(msg["team1_win_percentage_live"]).toFixed(4) > parseFloat(msg["team2_win_percentage_live"]).toFixed(4))
@@ -86,12 +75,14 @@ module.exports = {
     }
     tweet = tweet + ", in match " +  msg["match_number"] + " of " +  msg["bestof"]  ;
     if (process.env.NODE_ENV === 'production') {
-      tweet = tweet + '. http://***REMOVED***.com/matchups/' + msg["csgogame_id"];
+      tweet = tweet + '. http://***REMOVED***.com/csgomatchups/' + msg["csgogame_id"];
     }
     else {
-      tweet = tweet + '. http://***REMOVED***.staging.wpengine.com/matchups/' + msg["csgogame_id"];
+      tweet = tweet + '. http://***REMOVED***.staging.wpengine.com/csgomatchups/' + msg["csgogame_id"];
     }
     tweet = tweet.substring(0,139);
+    console.log(tweet);
+    return;
     try {
       T.post('statuses/update', { status: tweet }, function(err, data, response) {
         reply = CircularJSON.stringify(data);
