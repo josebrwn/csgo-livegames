@@ -19,8 +19,8 @@ else { // other environments tweet to stage, first one wins
   module.exports = {
     consumer_key: '***REMOVED***',
     consumer_secret: '***REMOVED***',
-    access_token: '893460385809874944-XmrUzgSyVj5rKnExrvzHZu5O1e8MONn',
-    access_token_secret: 'YdTXt9GnGJR3ygqQjmPDXKJlryBLh0nAIxlCgVfUuK1Dl',
+    access_token: '***REMOVED***',
+    access_token_secret: '***REMOVED***',
     timeout_ms: 30000
   }
 }
