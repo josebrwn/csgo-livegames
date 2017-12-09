@@ -196,9 +196,9 @@ function postStatusChange (jsonVal) {
         }
         else {
           console.log('ok to tweet', self.time);
-          if (tools.sendTweet(body)) {
-            setTwitterTimer(timers["TWEET_SEC"]);
-          };
+          // if (tools.sendTweet(body)) {
+          //   setTwitterTimer(timers["TWEET_SEC"]);
+          // };
         }
       }
     }
