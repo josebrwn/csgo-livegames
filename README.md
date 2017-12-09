@@ -29,6 +29,20 @@ node index.js
 node serverParent.js
 ```
 
+This project also comes with PM2 ecosystem files. . They're  in the root of the project folders. Use them like this:
+```
+pm2 start ecosystem_win.json --env=development
+```
+
+You can also set environment variables manually, e.g. on Windows:
+```
+// set environment to development:
+set NODE_ENV=development
+set API_URL=
+set API_KEY=
+node serverParent.js
+```
+
 ## Methods
 
 ### Constructor([options])
