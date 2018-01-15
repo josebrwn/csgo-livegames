@@ -128,7 +128,7 @@ function scrapeMatchPage() {
             }
             // hltv emits message
             else if (tools.IsJsonString(data)) {
-              data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is also handled in csgomapslookup
+              // data = data.replace(/de_cbble/g, 'de_cobblestone'); // HACK this is also handled in csgomapslookup - WHY?
               var dataJSON = CircularJSON.parse(data); // condensed but not truncated
               var _s = CircularJSON.stringify(dataJSON);
               // omit junk records
