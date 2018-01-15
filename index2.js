@@ -21,7 +21,9 @@ patch(self.socket); // piggyback socketio-wildcard
 */
 self.socket.on('connect', function () {
   console.log("Eureka, you connected!!!");
+  console.log(CircularJSON.stringify(self.socket));
   self.socket.emit("readyForMatch", listId);
+  console.log(CircularJSON.stringify(self.socket));
   // self.socket.emit("readyForMatch", t); // the site passes a token and listId, it used to work with just passing the listId
   self.socket.on('*', function (data) {
       console.log(data); // if you get data here via url2, success!
