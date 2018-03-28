@@ -2,10 +2,10 @@ var io = require('socket.io-client');
 var patch = require('socketio-wildcard')(io.Manager);
 var EE = require('events').EventEmitter;
 var inherits = require('util').inherits;
-var CONNECTION = 'http://scorebot2.hltv.org';
-var PORT = 10022;
-// var CONNECTION = 'https://scorebot-secure.hltv.org';
-// var PORT = 443;  // 53132 // , {secure: true}
+// var CONNECTION = 'http://scorebot2.hltv.org';
+// var PORT = 10022;
+var CONNECTION = 'https://scorebot-secure.hltv.org';
+var PORT = 80;
 var self;
 
 function Livescore(options) {
@@ -15,7 +15,11 @@ function Livescore(options) {
   self.gamesList = options.gamesList || self.gamesList || null;
   self.url = options.url || CONNECTION;
   self.port = options.port || PORT;
-  self.socket = io(self.url + ':' + self.port);
+  // self.socket = io(self.url + ':' + self.port);
+  self.socket = io(this.url + (this.port === 80 ? '' : ':' + PORT));
+
+
+
   // piggyback using the event-emitter bundled with socket.io client
   patch(self.socket);
   self.options = {};
@@ -34,13 +38,18 @@ Livescore.prototype._onConnect = function() {
     self.socket.on('*', self._onReceive); // captures everything
   }
 
+  // readyForMatch expects a listId, readyForScores expects listIds
+  self.listid = JSON.stringify({
+    token: '',
+    listIds: self.gamesList
+  }) || null;
+
   /*
   readyForMatch expects a single string - '2310804';
   readyForScores expects an integer array - [2310804,13235,2346246,24564564];
   */
-
   if (self.gamesList) {
-    self.socket.emit('readyForScores', self.gamesList);
+    self.socket.emit('readyForScores', self.listid);
     // self.emit('raw', self.gamesList); // can't do this because it'll trigger rogue api calls
   }
 };

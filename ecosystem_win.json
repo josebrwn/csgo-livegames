@@ -9,25 +9,25 @@
         "PORT": 3001,
         "NODE_ENV": "development",
         "API_URL": "http://jsonplaceholder.typicode.com/posts",
-        "API_KEY": "***REMOVED***"
+        "API_KEY": ""
       },
       "env_development": {
         "PORT": 3001,
         "NODE_ENV": "development",
-        "API_URL": "***REMOVED***",
-        "API_KEY": "***REMOVED***"
+        "API_URL": "",
+        "API_KEY": ""
       },
       "env_staging": {
         "PORT": 3001,
         "NODE_ENV": "staging",
-        "API_URL": "***REMOVED***",
-        "API_KEY": "***REMOVED***"
+        "API_URL": "",
+        "API_KEY": ""
       },
       "env_production": {
         "PORT": 3001,
         "NODE_ENV": "production",
-        "API_URL": "***REMOVED***",
-        "API_KEY": "***REMOVED***"
+        "API_URL": "",
+        "API_KEY": ""
       }
     }
   ]

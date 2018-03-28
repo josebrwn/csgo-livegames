@@ -5,9 +5,6 @@
 */
 module.exports = {
 
-
-
-
   currentTime: () => {
     _time = new Date().toISOString().
     replace(/T/, ' ').    // replace T with a space
@@ -75,10 +72,10 @@ module.exports = {
     }
     tweet = tweet + ", in match " +  msg["match_number"] + " of " +  msg["bestof"]  ;
     if (process.env.NODE_ENV === 'production') {
-      tweet = tweet + '. http://***REMOVED***.com/csgomatchups/' + msg["csgogame_id"];
+      tweet = tweet + '. http://' + msg["csgogame_id"];
     }
     else {
-      tweet = tweet + '. http://***REMOVED***.staging.wpengine.com/csgomatchups/' + msg["csgogame_id"];
+      tweet = tweet + '. http://' + msg["csgogame_id"];
     }
     tweet = tweet.substring(0,139);
     try {
