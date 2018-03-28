@@ -23,7 +23,7 @@ var currentGames = [];
 var loopEvery = 60000; // 1 minute
 
 function scrapeMatchPage() {
-  livegames.getUpcomingGames((games, err) => {
+  livegames.getLiveGames((games, err) => {
     if (err) {
       console.log(err);
     }

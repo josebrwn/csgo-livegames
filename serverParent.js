@@ -16,7 +16,7 @@ const lg = io.of('/livegames');
 
 // note the server expects "API-KEY" - separator is different!
 const api_url = process.env.API_URL || 'http://jsonplaceholder.typicode.com/posts';
-const api_key = process.env.API_KEY || '***REMOVED***';
+const api_key = process.env.API_KEY || '';
 const port = process.env.PORT || 3001;
 const options = {
     method: 'POST',
@@ -196,6 +196,7 @@ function postStatusChange (jsonVal) {
         }
         else {
           console.log('ok to tweet', self.time);
+          // TODO jdb. twitter api account is having problems
           // if (tools.sendTweet(body)) {
           //   setTwitterTimer(timers["TWEET_SEC"]);
           // };

@@ -13,6 +13,9 @@
 
 This is a wrapper for [andrewda](https://github.com/andrewda)'s [hltv-scorebot](https://github.com/andrewda/hltv-livescore), v. 1.0.0.
 
+A cheerio web scraper monitors HLTV for live games and socket-io child processes are forked
+to monitor each match's live score.
+
 ## Getting Started
 
 **Install with npm:**
@@ -48,8 +51,8 @@ node serverParent.js
 ### Constructor([options])
 - `options` - An optional object containing some of the following options
     - `listid` - The game's listid
-    - `url` - The URL to listen on. Defaults to `http://scorebot2.hltv.org`
-    - `port` - The port to listen on. Defaults to `10022`
+    - `url` - The URL to listen on. Defaults to `https://scorebot-secure.hltv.org`
+    - `port` - The port to listen on. Defaults to `80`
 
 Constructs a new `Livescore`. You will be automatically connected to the HLTV scorebot server. The game with the specified `listid` will be automatically started if provided. If not provided, you must specify them using them using the `start()` method.
 

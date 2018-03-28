@@ -63,10 +63,10 @@ const CircularJSON = require('circular-json');
     }
     tweet = tweet + ", in match " +  msg["match_number"] + " of " +  msg["bestof"]  ;
     if (process.env.NODE_ENV === 'production') {
-      tweet = tweet + '. http://***REMOVED***.com/matchups/' + msg["csgogame_id"];
+      tweet = tweet + '. http://' + msg["csgogame_id"];
     }
     else {
-      tweet = tweet + '. http://***REMOVED***.staging.wpengine.com/matchups/' + msg["csgogame_id"];
+      tweet = tweet + '. http://' + msg["csgogame_id"];
     }
     tweet = tweet.substring(0,139);
 
