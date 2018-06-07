@@ -42,6 +42,7 @@ Scorebot --x Livescore: {live scores}
 Livescore --x API: Post {live scores}
 ```
 
+![UML Sequence Diagram](diagram.png)
   
 
 ## Getting Started
