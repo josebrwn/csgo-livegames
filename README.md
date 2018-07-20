@@ -29,56 +29,48 @@ Livescore --x API: Post {live scores}
 
 ![UML Sequence Diagram](diagram.png)
 
-
 ## Getting Started
-
 
 **Install with npm:**
 
-
 ```console
-
 $ git clone path-to-this-repo
-
 $ npm install
-
 ```
-**Index.js** is used for testing and development; **serverParent.js** runs the full program phases of scraping for new games, posting to the API, connecting to the Scorebot server, and monitoring live scores.  
-  
 
 ## Usage
 
-```console
-node index.js # currently used for testing
-node serverParent.js # this is the current entry point (sorry)
+```js
+node index.js // currently used for testing
+node serverParent.js // this is the current entry point (sorry)
 
 ```
+
 This project also comes with PM2 ecosystem files. They're in the root of the project folders. Use them like this:
-
-```console
+```js
 pm2 start ecosystem_win.json --env=development
-
 ```
-You can also set environment variables manually, e.g. on Windows:
 
-```console
+You can also set environment variables manually, e.g. on Windows:
+```js
 // set environment to development:
 set NODE_ENV=development
 set API_URL=
 set API_KEY=
 node serverParent.js
 ```
+
 And on Linux you can execute this as a shell script:
 ```console
-#!/bin/bash
-# must save this file in Unix format
-cd 
-cd livescore
-sudo NODE_ENV=staging pm2 start serverParent.js
-cd
-cd livegames
-sudo NODE_ENV=staging pm2 start serverParent.js
-# TODO use an environment variable.
+$ #!/bin/bash
+$ # must save this file in Unix format
+$ cd 
+$ cd livescore
+$ sudo NODE_ENV=staging pm2 start serverParent.js
+$ cd
+$ cd livegames
+$ sudo NODE_ENV=staging pm2 start serverParent.js
+$ # TODO use an environment variable.
 ```
 
 ## Methods
