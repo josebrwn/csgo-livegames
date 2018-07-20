@@ -36,7 +36,7 @@ Livescore --x API: Post {live scores}
 **Install with npm:**
 
 
-```CMD
+```console
 
 $ git clone path-to-this-repo
 
@@ -48,14 +48,14 @@ $ npm install
 
 ## Usage
 
-```CMD
+```console
 node index.js # currently used for testing
 node serverParent.js # this is the current entry point (sorry)
 
 ```
 This project also comes with PM2 ecosystem files. They're in the root of the project folders. Use them like this:
 
-```
+```console
 pm2 start ecosystem_win.json --env=development
 
 ```
