@@ -50,8 +50,9 @@ This project also comes with PM2 ecosystem files. They're in the root of the pro
 ```js
 pm2 start ecosystem_win.json --env=development
 ```
-
-You can also set environment variables manually, e.g. on Windows:
+The ecosystem files provide you with three environments: development, staging, and production. 
+Each environment will also post to a different  API (if you do not assign an API it will default to jsonplaceholder.com). 
+You can set environment variables manually, e.g. on Windows:
 ```js
 // set environment to development:
 set NODE_ENV=development
